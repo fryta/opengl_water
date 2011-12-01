@@ -1,0 +1,29 @@
+#version 330
+
+
+in vec3 point;
+in vec2 coord;
+in vec3 normal;
+in vec3 tgtU;
+in vec3 tgtV;
+
+out vec3 posView;
+out vec3 normalView;
+out vec3 tgtUView;
+out vec3 tgtVView;
+out vec2 texcoord;
+
+uniform mat4 modelView;
+uniform mat4 proj;
+
+
+void main()
+{
+	posView    = (modelView*vec4(point, 1.0)).xyz;
+	normalView = (modelView*vec4(normal, 0.0)).xyz;
+	tgtUView   = (modelView*vec4(tgtU, 0.0)).xyz;
+	tgtVView   = (modelView*vec4(tgtV, 0.0)).xyz;
+	texcoord = coord;
+
+	gl_Position = proj*modelView*vec4(point, 1.0);
+}

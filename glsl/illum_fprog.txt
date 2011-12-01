@@ -1,0 +1,35 @@
+#version 330
+
+
+uniform sampler2D texDiff;
+uniform vec3 lightPos = vec3(0.0, 10.0, 0.0);
+uniform vec3 viewerPos = vec3(0.0, 0.0, 0.0);
+uniform float shininess = 8.0;
+
+in vec3 pointWorld;
+in vec3 normalWorld;
+in vec3 tgtUWorld;
+in vec3 tgtVWorld;
+in vec2 texcoord;
+
+out vec4 rslt;
+
+
+void main()
+{
+	vec3 N = normalize(normalWorld);
+	vec3 L = normalize(lightPos - pointWorld);
+	vec3 V = normalize(viewerPos - pointWorld);
+
+	vec3 H = normalize(L + V);
+
+	float ambient_factor = 0.125f;
+	float diff_factor = max(dot(N, L), 0.0);
+	float spec_factor = (shininess + 2.0f)*pow(max(dot(N, H), 0.0), shininess)/32.0;
+
+	vec3 kA = texture(texDiff, texcoord).rgb;
+	vec3 kD = kA;
+	vec3 kS = vec3(1.0, 1.0, 1.0);
+
+	rslt = vec4(kS*spec_factor + kD*diff_factor + kA*ambient_factor, 1.0);
+}

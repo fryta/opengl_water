@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0B7E5BB5-8A0C-49A4-9D50-7AAC594A85BD}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>GlLab7</RootNamespace>
+    <ProjectName>Water Demo</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../mCommon/include;../mGlp/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../mCommon/include;../mGlp/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\mCommon\src\mathx.cpp" />
+    <ClCompile Include="..\mCommon\src\stx_types.cpp" />
+    <ClCompile Include="..\mCommon\src\Windows\sys_base.cpp" />
+    <ClCompile Include="..\mCommon\src\Windows\sys_file.cpp" />
+    <ClCompile Include="..\mCommon\src\Windows\sys_process.cpp" />
+    <ClCompile Include="..\mCommon\src\Windows\sys_window.cpp" />
+    <ClCompile Include="..\mGlp\src\glplus.cpp" />
+    <ClCompile Include="..\mGlp\src\glplusx.cpp" />
+    <ClCompile Include="..\mGlp\src\glplusx_obj.cpp" />
+    <ClCompile Include="..\mGlp\src\glplusx_prog.cpp" />
+    <ClCompile Include="..\mGlp\src\glplusx_tan.cpp" />
+    <ClCompile Include="..\mGlp\src\glplus_buff.cpp" />
+    <ClCompile Include="..\mGlp\src\glplus_ext.cpp" />
+    <ClCompile Include="..\mGlp\src\glplus_fbo.cpp" />
+    <ClCompile Include="..\mGlp\src\glplus_prog.cpp" />
+    <ClCompile Include="..\mGlp\src\glplus_query.cpp" />
+    <ClCompile Include="..\mGlp\src\glplus_tex.cpp" />
+    <ClCompile Include="..\mGlp\src\glplus_vao.cpp" />
+    <ClCompile Include="..\mGlp\src\Windows\glplus_os.cpp" />
+    <ClCompile Include="light.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="renderable.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\mCommon\include\mathx.h" />
+    <ClInclude Include="..\mCommon\include\mathx_matrix.h" />
+    <ClInclude Include="..\mCommon\include\mathx_vector.h" />
+    <ClInclude Include="..\mCommon\include\stx_types.h" />
+    <ClInclude Include="..\mCommon\include\sys_base.h" />
+    <ClInclude Include="..\mCommon\include\sys_file.h" />
+    <ClInclude Include="..\mCommon\include\sys_process.h" />
+    <ClInclude Include="..\mCommon\include\sys_window.h" />
+    <ClInclude Include="..\mGlp\include\glplus.h" />
+    <ClInclude Include="..\mGlp\include\glplusx.h" />
+    <ClInclude Include="..\mGlp\include\glplusx_obj.h" />
+    <ClInclude Include="..\mGlp\include\glplusx_prog.h" />
+    <ClInclude Include="..\mGlp\include\glplusx_tan.h" />
+    <ClInclude Include="..\mGlp\include\glplus_buff.h" />
+    <ClInclude Include="..\mGlp\include\glplus_ext.h" />
+    <ClInclude Include="..\mGlp\include\glplus_fbo.h" />
+    <ClInclude Include="..\mGlp\include\glplus_os.h" />
+    <ClInclude Include="..\mGlp\include\glplus_prog.h" />
+    <ClInclude Include="..\mGlp\include\glplus_query.h" />
+    <ClInclude Include="..\mGlp\include\glplus_symbols.h" />
+    <ClInclude Include="..\mGlp\include\glplus_tex.h" />
+    <ClInclude Include="..\mGlp\include\glplus_vao.h" />
+    <ClInclude Include="light.h" />
+    <ClInclude Include="main.h" />
+    <ClInclude Include="renderable.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="glsl\illum_fprog.txt" />
+    <None Include="glsl\illum_vprog.txt" />
+    <None Include="glsl\post_fprog.txt" />
+    <None Include="glsl\post_vprog.txt" />
+    <None Include="glsl\render_fprog.txt" />
+    <None Include="glsl\render_vprog.txt" />
+    <None Include="glsl\shadow_fprog.txt" />
+    <None Include="glsl\shadow_vprog.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

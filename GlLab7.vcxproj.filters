@@ -1,0 +1,203 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Common">
+      <UniqueIdentifier>{9ecf38c8-c4c0-4050-a36c-9fb12f1363f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Common">
+      <UniqueIdentifier>{f59012f5-4b7c-4f82-92e2-684e6467fffa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Glp">
+      <UniqueIdentifier>{76f76c65-af5b-4e92-bec1-f369026d2d37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Glp">
+      <UniqueIdentifier>{e941dc31-8039-4d8a-b5b7-cb25de675ae9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GLSL">
+      <UniqueIdentifier>{a79d6973-0fbf-47c9-be44-b636b366e969}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="renderable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mCommon\src\Windows\sys_base.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mCommon\src\Windows\sys_file.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mCommon\src\Windows\sys_process.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mCommon\src\Windows\sys_window.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mCommon\src\mathx.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mGlp\src\glplus.cpp">
+      <Filter>Source Files\Glp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mGlp\src\glplus_ext.cpp">
+      <Filter>Source Files\Glp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mGlp\src\glplus_prog.cpp">
+      <Filter>Source Files\Glp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mGlp\src\glplusx_prog.cpp">
+      <Filter>Source Files\Glp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mCommon\src\stx_types.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mGlp\src\glplus_buff.cpp">
+      <Filter>Source Files\Glp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mGlp\src\glplus_fbo.cpp">
+      <Filter>Source Files\Glp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mGlp\src\glplus_query.cpp">
+      <Filter>Source Files\Glp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mGlp\src\glplus_tex.cpp">
+      <Filter>Source Files\Glp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mGlp\src\glplusx.cpp">
+      <Filter>Source Files\Glp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mGlp\src\glplus_vao.cpp">
+      <Filter>Source Files\Glp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mGlp\src\glplusx_obj.cpp">
+      <Filter>Source Files\Glp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mGlp\src\glplusx_tan.cpp">
+      <Filter>Source Files\Glp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mGlp\src\Windows\glplus_os.cpp">
+      <Filter>Source Files\Glp</Filter>
+    </ClCompile>
+    <ClCompile Include="light.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="renderable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mGlp\include\glplus_prog.h">
+      <Filter>Header Files\Glp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mGlp\include\glplus_query.h">
+      <Filter>Header Files\Glp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mGlp\include\glplus_symbols.h">
+      <Filter>Header Files\Glp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mGlp\include\glplus_tex.h">
+      <Filter>Header Files\Glp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mGlp\include\glplusx.h">
+      <Filter>Header Files\Glp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mGlp\include\glplusx_prog.h">
+      <Filter>Header Files\Glp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mGlp\include\glplusx_tan.h">
+      <Filter>Header Files\Glp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mGlp\include\glplus.h">
+      <Filter>Header Files\Glp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mGlp\include\glplus_buff.h">
+      <Filter>Header Files\Glp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mGlp\include\glplus_ext.h">
+      <Filter>Header Files\Glp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mGlp\include\glplus_fbo.h">
+      <Filter>Header Files\Glp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mCommon\include\sys_base.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mCommon\include\sys_file.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mCommon\include\sys_process.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mCommon\include\sys_window.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mCommon\include\stx_types.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mCommon\include\mathx.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mCommon\include\mathx_matrix.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mCommon\include\mathx_vector.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mGlp\include\glplus_vao.h">
+      <Filter>Header Files\Glp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mGlp\include\glplusx_obj.h">
+      <Filter>Header Files\Glp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mGlp\include\glplus_os.h">
+      <Filter>Header Files\Glp</Filter>
+    </ClInclude>
+    <ClInclude Include="light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="glsl\post_fprog.txt">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="glsl\post_vprog.txt">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="glsl\render_fprog.txt">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="glsl\render_vprog.txt">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="glsl\shadow_fprog.txt">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="glsl\shadow_vprog.txt">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="glsl\illum_fprog.txt">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="glsl\illum_vprog.txt">
+      <Filter>GLSL</Filter>
+    </None>
+  </ItemGroup>
+</Project>
