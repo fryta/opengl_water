@@ -5,6 +5,7 @@
 #include "sys_window.h"
 #include "glplus.h"
 #include "renderable.h"
+#include "water_surface.h"
 
 
 class MainForm: public sys::AppWindow
@@ -13,7 +14,7 @@ public:
 	MainForm(const wchar_t* caption, int l, int t, int w, int h):
 		sys::AppWindow(caption, false, &sys::Window::Position(l, t, w, h)),
 		m_width(1), m_height(1), m_fov(0.0625f), m_wheelFov(0),
-		m_cameraRotX(0.0f), m_cameraRotY(0.0f), m_cameraPos(0.0f, 0.5f, -4.0f) {}
+		m_cameraRotX(-0.3f), m_cameraRotY(-0.70f), m_cameraPos(3.0f, 2.0f, -4.0f) {}
 	bool init();
 	void release();
 
@@ -46,6 +47,7 @@ private:
 	// Scene object data
 	stx::vector<Renderable*> m_objects;
 	stx::vector<std::pair<math::Mat4x4f, Renderable*>> m_instances;
+	WaterSurface m_water;
 
 	// Camera data
 	float m_tmpTrackRotX;

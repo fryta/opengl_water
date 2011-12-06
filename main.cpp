@@ -24,7 +24,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 	WPARAM rslt = 1;
 	{
 		MainForm form(L"OpenGL Rendering Framework",
-			100, 100, 1680, 1050);
+			100, 100, 1400, 900);
 		if (!form.init())
 			return 1;
 
@@ -39,7 +39,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 
 bool MainForm::init()
 {
-	if (!m_dev.init(handle(), 3, 3, 24, 8, 24, 0))
+	if (!m_dev.init(handle(), 3, 3, 24, 8, 24, 0, 4))
 	{
 		message_box(L"OpenGL initialization failed.",
 			L"CATASTROPHIC ERROR", MB_OK | MB_ICONSTOP);
@@ -101,7 +101,7 @@ bool MainForm::init()
 
 	/*
 	ren = new Renderable();
-	if (!ren->load_plane(4.0f, 4.0f, 0.0f, 8.0f, 8.0f))
+	if (!ren->load_plane(0.1f, 0.1f, -0.1f, 8.0f, 8.0f))
 		return false;
 	if (!ren->addTextures("base", L"../data/GR_GK_011_diffuse.jpg",
 		L"../data/GR_GK_011_normal.jpg", L"../data/GR_GK_011_height.jpg"))
@@ -124,6 +124,12 @@ bool MainForm::init()
 	m_objects.push_back(ren);
 	m_instances.push_back(std::make_pair(math::Mat4x4f(math::Mat4x4f::I), ren));
 
+	m_water.set_dim(8.0f, 4.0f);
+	m_water.set_grid_dim(100, 50);
+	m_water.init();
+	//m_water.touch(32, 16, 0.3, 1.0);
+
+	glp::Device::enable_multisample();
 	glClearDepth(1.0);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0);
 	assert(glGetError() == GL_NO_ERROR);
@@ -237,6 +243,7 @@ void MainForm::on_key_down(int vKey, uint repCnt)
 	if (vKey == 'E') offs.y -= 0.125f;
 	if (vKey == 'W') offs.z += 0.125f;
 	if (vKey == 'S') offs.z -= 0.125f;
+	if (vKey == 'T') m_water.touch(50, 25, 0.3, 1.0);
 	m_cameraPos += matCameraRot*offs;
 }
 
@@ -278,14 +285,20 @@ void MainForm::update(uint64 usecTime)
 
 	for (size_t a = 0; a < m_instances.size(); ++a)
 	{
+		/*
 		if (a == 1)
 			math::set_rotation(m_instances[a].first, 0, 2,
 				float((usecTime >> 8)&0xffff)/(65536.0f)*math::consts<float>::_2pi);
+		*/
 
 		m_renderProg.uniform_mat4x4("model", m_instances[a].first.m, true);
 		m_renderProg.uniform_mat4x4("modelView", (invView*m_instances[a].first).m, true);
 		m_instances[a].second->render(true);
 	}
+
+	m_water.update_model(usecTime, false);
+	m_water.render(m_renderProg, invView);
+	
 
 	glp::Device::disable_depth_test();
 }

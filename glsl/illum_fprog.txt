@@ -4,7 +4,7 @@
 uniform sampler2D texDiff;
 uniform vec3 lightPos = vec3(0.0, 10.0, 0.0);
 uniform vec3 viewerPos = vec3(0.0, 0.0, 0.0);
-uniform float shininess = 8.0;
+uniform float shininess = 32.0;
 
 in vec3 pointWorld;
 in vec3 normalWorld;

@@ -26,6 +26,27 @@ bool Renderable::load_plane(float x, float z, float h, float tu, float tv)
 	return true;
 }
 
+bool Renderable::load_bar(float x, float y, float z)
+{
+	stx::vector<math::Vec3f> P;
+	stx::vector<math::Vec2f> T;
+	stx::vector<math::Vec3f> N;
+	stx::vector<glpx::FaceIndexes*> INDS;
+
+	if (!glpx::generate_box(x, y, z, P, T, N, INDS, true))
+		return false;
+
+	if (!generate_geometry(P, T, N, INDS, true))
+		return false;
+
+	for (size_t a = 0; a < INDS.size(); ++a)
+		delete INDS[a];
+	INDS.clear();
+
+	fill_buffers();
+	return true;
+}
+
 bool Renderable::load_obj(const wchar_t* fileName, bool swapZ, bool gen_tangent)
 {
 	stx::vector<math::Vec3f> P;
