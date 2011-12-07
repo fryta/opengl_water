@@ -47,7 +47,7 @@ private:
 	// Scene object data
 	stx::vector<Renderable*> m_objects;
 	stx::vector<std::pair<math::Mat4x4f, Renderable*>> m_instances;
-	WaterSurface m_water;
+	WaterSurface* m_water;
 
 	// Camera data
 	float m_tmpTrackRotX;

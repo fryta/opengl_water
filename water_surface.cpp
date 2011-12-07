@@ -4,27 +4,70 @@
 #include <cmath>
 #define M_PI 3.14159265358979323846
 
-void WaterSurface::set_dim(float dim_x, float dim_y) 
+
+WaterSurface::WaterSurface(
+		float dim_x, float dim_z, int grid_x, int grid_z, 
+		float wave_speed, float dt, float damp_factor, uint64 usec_step_time) 
 {
 	m_dim_x = dim_x;
-	m_dim_y = dim_y;
+	m_dim_y = dim_z;
+	m_grid_x = grid_x;
+	m_grid_y = grid_z;
+	m_wave_speed = wave_speed;
+	m_dt = dt;
+	m_damp_factor = damp_factor;
+	m_step = usec_step_time;
+
+	m_u = nullptr;
+	m_u_new = nullptr;
+	m_v = nullptr;
+	m_bar = nullptr;
+	m_model_mat = nullptr;
 }
 
-void WaterSurface::set_grid_dim(int grid_x, int grid_y)
+WaterSurface::~WaterSurface()
 {
-	m_grid_x = grid_x;
-	m_grid_y = grid_y;
+	if (m_u != nullptr) 
+	{
+		for (int i = 0; i < m_grid_x + 2; i++)
+			delete[] m_u[i];
+		delete[] m_u;
+	}
+	if (m_u_new != nullptr) 
+	{
+		for (int i = 0; i < m_grid_x + 2; i++)
+			delete[] m_u_new[i];
+		delete[] m_u_new;
+	}
+	if (m_v != nullptr) 
+	{
+		for (int i = 0; i < m_grid_x + 2; i++)
+			delete[] m_v[i];
+		delete[] m_v;
+	}
+	if (m_model_mat != nullptr) 
+	{
+		for (int i = 0; i < m_grid_x + 2; i++)
+			delete[] m_model_mat[i];
+		delete[] m_model_mat;
+	}
+	if (m_bar != nullptr) 
+		delete m_bar;
 }
 
 bool WaterSurface::init() 
 {
-	if (m_dim_x == 0 || m_dim_y == 0 || 
-		m_grid_x == 0 || m_grid_y == 0)
-		// set dimension first
+	if (m_dim_x == 0 || m_dim_y == 0 || m_grid_x == 0 || m_grid_y == 0)
+	{
+		fprintf(stderr, "Invalid dimensions of water surface.\n");
 		return false;
+	}
 
 	m_cell_size_x = m_dim_x / m_grid_x;
 	m_cell_size_y = m_dim_y / m_grid_y;
+
+	m_simulation_time = 0;
+	m_last_call = 0;
 
 	m_u = new double*[m_grid_x + 2]; // + boundary
 	m_u_new = new double*[m_grid_x + 2];
@@ -39,26 +82,18 @@ bool WaterSurface::init()
 		m_model_mat[i] = new math::Mat4x4f[m_grid_y + 2];
 	}
 
-	
 	for (int i = 0; i < m_grid_x + 2; i++)
 		for (int j = 0; j < m_grid_y + 2; j++) 
 		{
 			// init m_u "with some initeresting func"
-			//m_u[i][j] = -sin(10.0f*float(i) / m_grid_x + 10.0f*float(j) / m_grid_y)*0.4;
-			//m_u[i][j] = -sin(10.0f*float(i) / m_grid_x + 0.4f*(10.0f*float(j) / m_grid_y))*0.4;
-			m_u[i][j] = 0.0;
+			// i.e. m_u[i][j] = -sin(10.0f*float(i) / m_grid_x + 10.0f*float(j) / m_grid_y)*0.4;
+			// i.e. m_u[i][j] = -sin(10.0f*float(i) / m_grid_x + 0.4f*(10.0f*float(j) / m_grid_y))*0.4;
+			m_u[i][j] = 0.0; // or just wait for interaction
 			m_v[i][j] = 0.0f;
 			m_model_mat[i][j] = math::Mat4x4f(math::Mat4x4f::I);
 		}
 
 	m_bar = new Renderable();
-	/*
-	if (!m_bar->load_plane(m_cell_size_x/2.0f, m_cell_size_y/2.0f, 0.0f, 1.0f, 1.0f))
-	{
-		fprintf(stderr, "Loading planes failed.\n");
-		return false;
-	}
-	*/
 	if (!m_bar->load_bar(m_cell_size_x/2.0f, 1.0f, m_cell_size_y/2.0f))
 	{
 		fprintf(stderr, "Loading planes failed.\n");
@@ -69,18 +104,6 @@ bool WaterSurface::init()
 		fprintf(stderr, "Loading textures for planes failed.\n");
 		return false;
 	}
-
-	m_wave_speed = 0.4;
-	m_dt = 0.1;
-	m_damp_factor = 0.995;
-	m_simulation_time = 0;
-	m_last_call = 0;
-	m_step = 50000;
-	// force a few steps to smooth initial state
-	//update_model(0, true); update_model(0, true); update_model(0, true);
-	// reset
-	m_simulation_time = 0;
-	m_last_call = 0;
 
 	return true;
 }
@@ -100,43 +123,6 @@ void WaterSurface::render(
 			render_program.uniform_mat4x4("modelView", (inv_view*m_model_mat[i][j]).m, true);
 			m_bar->render(true);
 		}
-}
-
-void WaterSurface::update_model_simple(uint64 usec_time, bool force_one_step)
-{
-	if (force_one_step) 
-	{
-		m_simulation_time = m_step + 1;
-	}
-	else 
-	{
-		m_simulation_time += (usec_time - m_last_call);
-		m_last_call = usec_time;
-	}
-	while (m_simulation_time > m_step) {
-		m_simulation_time -= m_step;
-		for (int i = 1; i <= m_grid_x; i++)
-			for (int j = 1; j <= m_grid_y; j++) 
-			{
-				m_v[i][j] += (m_u[i-1][j] + m_u[i+1][j] + m_u[i][j-1] + m_u[i][j+1])/4.0f - m_u[i][j];
-				m_v[i][j] *= 0.65;
-				m_u[i][j] += m_v[i][j];
-			}
-
-		// clamp on edges
-		for (int i = 0; i < m_grid_x + 2; i++)
-		{
-			m_u[i][0] = m_u[i][1];
-			m_u[i][m_grid_y + 1] = m_u[i][m_grid_y];
-		}
-
-		for (int j = 0; j < m_grid_y + 2; j++) 
-		{
-			m_u[0][j] = m_u[1][j];
-			m_u[m_grid_x + 1][j] = m_u[m_grid_x][j];
-		}
-
-	}
 }
 
 void WaterSurface::update_model(uint64 usec_time, bool force_one_step)
@@ -184,20 +170,6 @@ void WaterSurface::update_model(uint64 usec_time, bool force_one_step)
 		}
 
 	}
-
-	preserve_avg_height();
-}
-
-void WaterSurface::preserve_avg_height()
-{
-	double avg_height = 0.0;
-	for (int i = 0; i < m_grid_x + 2; i++)
-		for (int j = 0; j < m_grid_y + 2; j++) 
-		{
-			avg_height += m_u[i][j];
-		}
-
-	avg_height /= (m_grid_x + 2) * (m_grid_y + 2);
 }
 
 void WaterSurface::touch(int x, int y, double strength, double distance)

@@ -124,10 +124,8 @@ bool MainForm::init()
 	m_objects.push_back(ren);
 	m_instances.push_back(std::make_pair(math::Mat4x4f(math::Mat4x4f::I), ren));
 
-	m_water.set_dim(8.0f, 4.0f);
-	m_water.set_grid_dim(100, 50);
-	m_water.init();
-	//m_water.touch(32, 16, 0.3, 1.0);
+	m_water = new WaterSurface(8.0f, 4.0f, 100, 50, 0.5f, 0.1f, 0.995f, 50000);
+	m_water->init();
 
 	glp::Device::enable_multisample();
 	glClearDepth(1.0);
@@ -144,6 +142,7 @@ void MainForm::release()
 		m_objects[a]->release();
 		delete m_objects[a];
 	}
+	delete m_water;
 	m_renderProg.release();
 	m_dev.release();
 }
@@ -243,7 +242,7 @@ void MainForm::on_key_down(int vKey, uint repCnt)
 	if (vKey == 'E') offs.y -= 0.125f;
 	if (vKey == 'W') offs.z += 0.125f;
 	if (vKey == 'S') offs.z -= 0.125f;
-	if (vKey == 'T') m_water.touch(50, 25, 0.3, 1.0);
+	if (vKey == 'T') m_water->touch(50, 25, 0.3, 1.0);
 	m_cameraPos += matCameraRot*offs;
 }
 
@@ -296,8 +295,8 @@ void MainForm::update(uint64 usecTime)
 		m_instances[a].second->render(true);
 	}
 
-	m_water.update_model(usecTime, false);
-	m_water.render(m_renderProg, invView);
+	m_water->update_model(usecTime, false);
+	m_water->render(m_renderProg, invView);
 	
 
 	glp::Device::disable_depth_test();
