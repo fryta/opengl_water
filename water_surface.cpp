@@ -10,9 +10,9 @@ WaterSurface::WaterSurface(
 		float wave_speed, float dt, float damp_factor, uint64 usec_step_time) 
 {
 	m_dim_x = dim_x;
-	m_dim_y = dim_z;
+	m_dim_z = dim_z;
 	m_grid_x = grid_x;
-	m_grid_y = grid_z;
+	m_grid_z = grid_z;
 	m_wave_speed = wave_speed;
 	m_dt = dt;
 	m_damp_factor = damp_factor;
@@ -57,14 +57,14 @@ WaterSurface::~WaterSurface()
 
 bool WaterSurface::init() 
 {
-	if (m_dim_x == 0 || m_dim_y == 0 || m_grid_x == 0 || m_grid_y == 0)
+	if (m_dim_x == 0 || m_dim_z == 0 || m_grid_x == 0 || m_grid_z == 0)
 	{
 		fprintf(stderr, "Invalid dimensions of water surface.\n");
 		return false;
 	}
 
 	m_cell_size_x = m_dim_x / m_grid_x;
-	m_cell_size_y = m_dim_y / m_grid_y;
+	m_cell_size_y = m_dim_z / m_grid_z;
 
 	m_simulation_time = 0;
 	m_last_call = 0;
@@ -76,18 +76,18 @@ bool WaterSurface::init()
 	
 	for (int i = 0; i < m_grid_x + 2; i++)
 	{
-		m_u[i] = new double[m_grid_y + 2];
-		m_u_new[i] = new double[m_grid_y + 2];
-		m_v[i] = new double[m_grid_y + 2];
-		m_model_mat[i] = new math::Mat4x4f[m_grid_y + 2];
+		m_u[i] = new double[m_grid_z + 2];
+		m_u_new[i] = new double[m_grid_z + 2];
+		m_v[i] = new double[m_grid_z + 2];
+		m_model_mat[i] = new math::Mat4x4f[m_grid_z + 2];
 	}
 
 	for (int i = 0; i < m_grid_x + 2; i++)
-		for (int j = 0; j < m_grid_y + 2; j++) 
+		for (int j = 0; j < m_grid_z + 2; j++) 
 		{
 			// init m_u "with some initeresting func"
-			// i.e. m_u[i][j] = -sin(10.0f*float(i) / m_grid_x + 10.0f*float(j) / m_grid_y)*0.4;
-			// i.e. m_u[i][j] = -sin(10.0f*float(i) / m_grid_x + 0.4f*(10.0f*float(j) / m_grid_y))*0.4;
+			// i.e. m_u[i][j] = -sin(10.0f*float(i) / m_grid_x + 10.0f*float(j) / m_grid_z)*0.4;
+			// i.e. m_u[i][j] = -sin(10.0f*float(i) / m_grid_x + 0.4f*(10.0f*float(j) / m_grid_z))*0.4;
 			m_u[i][j] = 0.0; // or just wait for interaction
 			m_v[i][j] = 0.0f;
 			m_model_mat[i][j] = math::Mat4x4f(math::Mat4x4f::I);
@@ -113,10 +113,10 @@ void WaterSurface::render(
 	const math::Mat4x4f& inv_view) const
 {
 	for (int i = 1; i < m_grid_x + 1; i++)
-		for (int j = 1; j < m_grid_y + 1; j++) 
+		for (int j = 1; j < m_grid_z + 1; j++) 
 		{
 			// transpose bars to proper positions
-			math::Vec3f tr = math::Vec3f(-0.5f*m_dim_x + (i - 0.5f)*m_cell_size_x, -1.5f + float(m_u[i][j]), -0.5f*m_dim_y + (j - 0.5f)*m_cell_size_y);
+			math::Vec3f tr = math::Vec3f(-0.5f*m_dim_x + (i - 0.5f)*m_cell_size_x, -1.5f + float(m_u[i][j]), -0.5f*m_dim_z + (j - 0.5f)*m_cell_size_y);
 			math::set_translation(m_model_mat[i][j], tr);
 
 			render_program.uniform_mat4x4("model", m_model_mat[i][j].m, true);
@@ -141,7 +141,7 @@ void WaterSurface::update_model(uint64 usec_time, bool force_one_step)
 
 		double force;
 		for (int i = 1; i <= m_grid_x; i++)
-			for (int j = 1; j <= m_grid_y; j++) 
+			for (int j = 1; j <= m_grid_z; j++) 
 			{
 				force = 
 					pow(m_wave_speed, 2.0) // c^2
@@ -160,10 +160,10 @@ void WaterSurface::update_model(uint64 usec_time, bool force_one_step)
 		for (int i = 0; i < m_grid_x + 2; i++)
 		{
 			m_u[i][0] = m_u[i][1];
-			m_u[i][m_grid_y + 1] = m_u[i][m_grid_y];
+			m_u[i][m_grid_z + 1] = m_u[i][m_grid_z];
 		}
 
-		for (int j = 0; j < m_grid_y + 2; j++) 
+		for (int j = 0; j < m_grid_z + 2; j++) 
 		{
 			m_u[0][j] = m_u[1][j];
 			m_u[m_grid_x + 1][j] = m_u[m_grid_x][j];
@@ -178,7 +178,7 @@ void WaterSurface::touch(int x, int y, double strength, double distance)
 	int low_x = std::max(0, x - 10);
 	int high_x = std::min(m_grid_x + 1, x + 10);
 	int low_y = std::max(0, y - 10);
-	int high_y = std::min(m_grid_y + 1, y + 10);
+	int high_y = std::min(m_grid_z + 1, y + 10);
 
 	double change_sum = 0.0;
 	for (int i = low_x; i < high_x; i++)
@@ -194,9 +194,9 @@ void WaterSurface::touch(int x, int y, double strength, double distance)
 			change_sum += change;
 		}
 
-	change_sum /= (m_grid_x + 2)*(m_grid_y + 2);
+	change_sum /= (m_grid_x + 2)*(m_grid_z + 2);
 	for (int i = 0; i < m_grid_x + 2; i++)
-		for (int j = 0; j < m_grid_y + 2; j++) 
+		for (int j = 0; j < m_grid_z + 2; j++) 
 		{
 			m_u[i][j] += change_sum;
 		}

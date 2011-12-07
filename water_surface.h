@@ -21,9 +21,9 @@ public:
 private:
 	// set by constructor
 	float m_dim_x;
-	float m_dim_y;
+	float m_dim_z;
 	int m_grid_x;
-	int m_grid_y;
+	int m_grid_z;
 	double m_wave_speed;
 	double m_dt;
 	double m_damp_factor;
@@ -37,7 +37,7 @@ private:
 	double** m_v;
 	uint64 m_simulation_time;
 	uint64 m_last_call;
-	//
+
 	Renderable* m_bar;
 	math::Mat4x4f** m_model_mat;
 };
