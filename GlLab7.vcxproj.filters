@@ -96,7 +96,7 @@
     <ClCompile Include="light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="water_surface.cpp">
+    <ClCompile Include="water_surface_cpu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -176,7 +176,7 @@
     <ClInclude Include="light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="water_surface.h">
+    <ClInclude Include="water_surface_cpu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

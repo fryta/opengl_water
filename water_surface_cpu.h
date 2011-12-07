@@ -4,10 +4,10 @@
 #include "renderable.h"
 #include "glplus.h"
 
-class WaterSurface
+class WaterSurfaceCPU
 {
 public:
-	WaterSurface(
+	WaterSurfaceCPU(
 		float dim_x, float dim_z, int grid_x, int grid_z, 
 		float wave_speed, float dt, float damp_factor, uint64 usec_step_time);
 	bool init();
@@ -16,7 +16,7 @@ public:
 		const math::Mat4x4f& inv_view) const;
 	void update_model(uint64 usec_time, bool force_one_step);
 	void touch(int x, int y, double strength, double distance);
-	~WaterSurface();
+	~WaterSurfaceCPU();
 
 private:
 	// set by constructor

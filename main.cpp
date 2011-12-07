@@ -124,7 +124,7 @@ bool MainForm::init()
 	m_objects.push_back(ren);
 	m_instances.push_back(std::make_pair(math::Mat4x4f(math::Mat4x4f::I), ren));
 
-	m_water = new WaterSurface(8.0f, 4.0f, 100, 50, 0.5f, 0.1f, 0.995f, 50000);
+	m_water = new WaterSurfaceCPU(8.0f, 4.0f, 100, 50, 0.5f, 0.1f, 0.995f, 50000);
 	m_water->init();
 
 	glp::Device::enable_multisample();

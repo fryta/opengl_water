@@ -1,11 +1,11 @@
-#include "water_surface.h"
+#include "water_surface_cpu.h"
 #include <cstdio>
 #include <algorithm>
 #include <cmath>
 #define M_PI 3.14159265358979323846
 
 
-WaterSurface::WaterSurface(
+WaterSurfaceCPU::WaterSurfaceCPU(
 		float dim_x, float dim_z, int grid_x, int grid_z, 
 		float wave_speed, float dt, float damp_factor, uint64 usec_step_time) 
 {
@@ -25,7 +25,7 @@ WaterSurface::WaterSurface(
 	m_model_mat = nullptr;
 }
 
-WaterSurface::~WaterSurface()
+WaterSurfaceCPU::~WaterSurfaceCPU()
 {
 	if (m_u != nullptr) 
 	{
@@ -55,7 +55,7 @@ WaterSurface::~WaterSurface()
 		delete m_bar;
 }
 
-bool WaterSurface::init() 
+bool WaterSurfaceCPU::init() 
 {
 	if (m_dim_x == 0 || m_dim_z == 0 || m_grid_x == 0 || m_grid_z == 0)
 	{
@@ -108,7 +108,7 @@ bool WaterSurface::init()
 	return true;
 }
 
-void WaterSurface::render(
+void WaterSurfaceCPU::render(
 	glp::Program& render_program, 
 	const math::Mat4x4f& inv_view) const
 {
@@ -125,7 +125,7 @@ void WaterSurface::render(
 		}
 }
 
-void WaterSurface::update_model(uint64 usec_time, bool force_one_step)
+void WaterSurfaceCPU::update_model(uint64 usec_time, bool force_one_step)
 {
 	if (force_one_step) 
 	{
@@ -172,7 +172,7 @@ void WaterSurface::update_model(uint64 usec_time, bool force_one_step)
 	}
 }
 
-void WaterSurface::touch(int x, int y, double strength, double distance)
+void WaterSurfaceCPU::touch(int x, int y, double strength, double distance)
 {
 	// include boundary (0 and m_grid_x/y + 1)
 	int low_x = std::max(0, x - 10);

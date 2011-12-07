@@ -164,7 +164,7 @@
     <ClCompile Include="light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="renderable.cpp" />
-    <ClCompile Include="water_surface.cpp" />
+    <ClCompile Include="water_surface_cpu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\mCommon\include\mathx.h" />
@@ -192,7 +192,7 @@
     <ClInclude Include="light.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="renderable.h" />
-    <ClInclude Include="water_surface.h" />
+    <ClInclude Include="water_surface_cpu.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="glsl\illum_fprog.txt" />
