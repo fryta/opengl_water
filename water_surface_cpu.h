@@ -1,5 +1,5 @@
-#ifndef watersurfaceH
-#define watersurfaceH
+#ifndef watersurfacecpuH
+#define watersurfacecpuH
 
 #include "renderable.h"
 #include "glplus.h"

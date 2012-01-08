@@ -26,7 +26,28 @@ bool Renderable::load_plane(float x, float z, float h, float tu, float tv)
 	return true;
 }
 
-bool Renderable::load_bar(float x, float y, float z)
+bool Renderable::load_grid(float x, float z, float h, uint grid_x, uint grid_z, float tu, float tv)
+{
+	stx::vector<math::Vec3f> P;
+	stx::vector<math::Vec2f> T;
+	stx::vector<math::Vec3f> N;
+	stx::vector<glpx::FaceIndexes*> INDS;
+
+	if (!glpx::generate_grid(x, z, h, grid_x, grid_z, tu, tv, P, T, N, INDS, true))
+		return false;
+
+	if (!generate_geometry(P, T, N, INDS, true))
+		return false;
+
+	for (size_t a = 0; a < INDS.size(); ++a)
+		delete INDS[a];
+	INDS.clear();
+
+	fill_buffers();
+	return true;
+}
+
+bool Renderable::load_box(float x, float y, float z)
 {
 	stx::vector<math::Vec3f> P;
 	stx::vector<math::Vec2f> T;

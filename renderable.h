@@ -48,7 +48,8 @@ class Renderable
 {
 public:
 	bool load_plane(float x, float z, float h, float tu, float tv);
-	bool load_bar(float x, float y, float z);
+	bool load_grid(float x, float z, float h, uint grid_x, uint grid_z, float tu, float tv);
+	bool load_box(float x, float y, float z);
 	bool load_obj(const wchar_t* fileName, bool swapZ, bool gen_tangent);
 
 	void release();

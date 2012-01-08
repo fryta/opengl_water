@@ -17,7 +17,6 @@ uniform mat4 model;
 uniform mat4 modelView;
 uniform mat4 proj;
 
-
 void main()
 {
 	pointWorld  = (model*vec4(point, 1.0)).xyz;
@@ -25,6 +24,6 @@ void main()
 	tgtUWorld   = (model*vec4(tgtU, 0.0)).xyz;
 	tgtVWorld   = (model*vec4(tgtV, 0.0)).xyz;
 	texcoord = coord;
-
+	
 	gl_Position = proj*modelView*vec4(point, 1.0);
 }

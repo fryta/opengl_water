@@ -1,0 +1,15 @@
+#version 330
+
+in vec3 point;
+
+uniform mat4 model_view;
+uniform mat4 proj;
+
+// Texture Coordinate to fragment program
+out vec3 texcoord;
+
+void main(void) 
+{
+    texcoord = normalize(point.xyz);
+    gl_Position = proj*model_view*vec4(point, 1.0);
+}

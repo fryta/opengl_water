@@ -1,0 +1,71 @@
+#version 330
+
+uniform sampler2D heightOld;
+uniform sampler2D velocityOld;
+
+uniform float touch_distance = 0.0;
+uniform float touch_strength = 0.0;
+uniform vec2 touch_pos = vec2(0.0, 0.0);
+
+uniform vec2 size;
+uniform float h_x;
+uniform float h_z;
+uniform float wave_speed;
+uniform float dt;
+uniform float damp_factor;
+
+out vec4 height;
+out vec4 velocity;
+
+void main()
+{
+	// touch water surface if it's desired
+	if (touch_distance > 0.0)
+	{
+		float PI = 3.14159265358979323846264; // const
+		vec2 coords_diff = gl_FragCoord.xy - touch_pos;
+		float dist = sqrt(pow(coords_diff.x, 2.0) + pow(coords_diff.y, 2.0));
+		
+		vec2 coords = gl_FragCoord.xy/size;
+		float u = texture(heightOld, coords).r;
+		float v = texture(velocityOld, coords).r;
+		if (dist <= touch_distance)
+		{
+			dist = dist/touch_distance;
+			float change = touch_strength * (cos(dist * PI) + 1.0) / 2.0;
+			height = vec4(u - change, 0.0, 0.0, 1.0);
+		}
+		else 
+		{
+			// old value
+			height = vec4(u, 0.0, 0.0, 1.0);
+			velocity = vec4(v, 0.0, 0.0, 1.0);
+		}
+	}
+	// update height texture
+	else 
+	{
+		vec2 coords = gl_FragCoord.xy/size;
+		vec2 coords_left = (gl_FragCoord.xy + vec2(-1.0, 0.0))/size;
+		vec2 coords_right = (gl_FragCoord.xy + vec2(1.0, 0.0))/size;
+		vec2 coords_up = (gl_FragCoord.xy + vec2(0.0, 1.0))/size;
+		vec2 coords_down = (gl_FragCoord.xy + vec2(0.0, -1.0))/size;
+
+		float v = texture(velocityOld, coords).r;
+		float u = texture(heightOld, coords).r;
+		float u_left = texture(heightOld, coords_left).r;
+		float u_right = texture(heightOld, coords_right).r;
+		float u_up = texture(heightOld, coords_up).r;
+		float u_down = texture(heightOld, coords_down).r;
+
+		float force = 
+			pow(wave_speed, 2.0) // c^2
+			*(u_left + u_right + u_up + u_down - 4*u)
+			/(h_x*h_z);
+
+		v = v + force * dt;
+		v = v * damp_factor;
+		velocity = vec4(v, 0.0, 0.0, 1.0);
+		height = vec4(u + v * dt, 0.0, 0.0, 1.0);
+	}
+}

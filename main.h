@@ -5,6 +5,7 @@
 #include "sys_window.h"
 #include "glplus.h"
 #include "renderable.h"
+#include "water_surface.h"
 #include "water_surface_cpu.h"
 
 
@@ -15,6 +16,7 @@ public:
 		sys::AppWindow(caption, false, &sys::Window::Position(l, t, w, h)),
 		m_width(1), m_height(1), m_fov(0.0625f), m_wheelFov(0),
 		m_cameraRotX(-0.3f), m_cameraRotY(-0.70f), m_cameraPos(3.0f, 2.0f, -4.0f) {}
+		//m_cameraRotX(-0.0f), m_cameraRotY(-0.0f), m_cameraPos(0.0f, 0.0f, 0.0f) {}
 	bool init();
 	void release();
 
@@ -37,17 +39,21 @@ public:
 
 private:
 	void update(uint64 usecTime);
+	void map_mouse_click_on_plane(int x_pos, int y_pos, float plane_y, float &word_x, float &word_z);
 
 	int m_width;
 	int m_height;
 
 	glp::Device m_dev;
 	glp::Program m_renderProg;
+	glp::Program m_skybox_prog;
 
 	// Scene object data
 	stx::vector<Renderable*> m_objects;
 	stx::vector<std::pair<math::Mat4x4f, Renderable*>> m_instances;
-	WaterSurfaceCPU* m_water;
+	WaterSurface* m_water;
+	Renderable* m_skybox;
+	glp::TexCube m_skybox_cubemap;
 
 	// Camera data
 	float m_tmpTrackRotX;

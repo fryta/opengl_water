@@ -94,7 +94,7 @@ bool WaterSurfaceCPU::init()
 		}
 
 	m_bar = new Renderable();
-	if (!m_bar->load_bar(m_cell_size_x/2.0f, 1.0f, m_cell_size_y/2.0f))
+	if (!m_bar->load_box(m_cell_size_x/2.0f, 1.0f, m_cell_size_y/2.0f))
 	{
 		fprintf(stderr, "Loading planes failed.\n");
 		return false;

@@ -99,6 +99,9 @@
     <ClCompile Include="water_surface_cpu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="water_surface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -179,30 +182,33 @@
     <ClInclude Include="water_surface_cpu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="water_surface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="glsl\post_fprog.txt">
-      <Filter>GLSL</Filter>
-    </None>
-    <None Include="glsl\post_vprog.txt">
-      <Filter>GLSL</Filter>
-    </None>
-    <None Include="glsl\render_fprog.txt">
-      <Filter>GLSL</Filter>
-    </None>
-    <None Include="glsl\render_vprog.txt">
-      <Filter>GLSL</Filter>
-    </None>
-    <None Include="glsl\shadow_fprog.txt">
-      <Filter>GLSL</Filter>
-    </None>
-    <None Include="glsl\shadow_vprog.txt">
-      <Filter>GLSL</Filter>
-    </None>
     <None Include="glsl\illum_fprog.txt">
       <Filter>GLSL</Filter>
     </None>
     <None Include="glsl\illum_vprog.txt">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="glsl\water_fprog.txt">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="glsl\water_vprog.txt">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="glsl\calc_wave_fprog.txt">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="glsl\calc_wave_vprog.txt">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="glsl\skybox.fp">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="glsl\skybox.vp">
       <Filter>GLSL</Filter>
     </None>
   </ItemGroup>
