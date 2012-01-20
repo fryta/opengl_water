@@ -39,12 +39,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 
 bool MainForm::init()
 {
-	if (!m_dev.init(handle(), 3, 2, 24, 8, 24, 0, 4))
+	if (!m_dev.init(handle(), 3, 3, 24, 8, 24, 0, 4))
 	{
 		message_box(L"OpenGL initialization failed.",
 			L"CATASTROPHIC ERROR", MB_OK | MB_ICONSTOP);
 		return false;
 	}
+
+	DEVMODE dm;
+	EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &dm);
+	m_displFreq = dm.dmDisplayFrequency;
 
 	{
 		glp::VertProgram vprog;
@@ -148,6 +152,9 @@ bool MainForm::init()
 		}
 	}
 
+	m_timerQuery.init();
+	m_queryStarted = false;
+
 	//################## Renderable objects
 	Renderable* ren = nullptr;
 
@@ -169,7 +176,7 @@ bool MainForm::init()
 	m_objects.push_back(ren);
 	m_instances.push_back(std::make_pair(math::Mat4x4f(math::Mat4x4f::I), ren));
 
-	m_water = new WaterSurface(8.0f, 4.0f, -0.07f, 400, 200, 0.4f, 0.01f, 0.995f, 10000);
+	m_water = new WaterSurface(8.0f, 4.0f, -0.07f, 800, 400, 0.4f, 0.01f, 0.995f, 10000);
 	if(!m_water->init())
 		return false;
 
@@ -225,9 +232,36 @@ void MainForm::release()
 
 void MainForm::on_clock(uint64 usecTime)
 {
+	int64 gpuTime = 0;
+	bool rsltAvailable = false;
+
+	if (m_queryStarted)
+		rsltAvailable = m_timerQuery.resultAvailable();
+
+	if (rsltAvailable)
+		gpuTime = m_timerQuery.result_i64();
+
+	if (!m_queryStarted || rsltAvailable)
+		m_timerQuery.begin();
+
 	update(usecTime);
 	assert(glGetError() == GL_NO_ERROR);
+
+	if (!m_queryStarted || rsltAvailable)
+		m_timerQuery.end();
+
 	m_dev.swap_buffers();
+
+	m_queryStarted = true;
+
+	if (rsltAvailable)
+	{
+		float gpuLoad = float(gpuTime)*float(m_displFreq)*1.0e-9f;
+
+		wchar_t buff[128];
+		swprintf(buff, L"OpenGL Rendering Framework, GPU load: %4.1f%%", gpuLoad*100.0f);
+		SetWindowText((HWND)handle(), buff);
+	}
 }
 
 void MainForm::on_size(int width, int height)

@@ -47,6 +47,8 @@ private:
 	glp::Device m_dev;
 	glp::Program m_renderProg;
 	glp::Program m_skybox_prog;
+	glp::TimerQuery m_timerQuery;
+	float m_displFreq;
 
 	// Scene object data
 	stx::vector<Renderable*> m_objects;
@@ -66,6 +68,7 @@ private:
 	int m_wheelFov;
 
 	math::Mat4x4f m_proj;
+	bool m_queryStarted;
 };
 
 
