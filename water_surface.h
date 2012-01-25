@@ -14,7 +14,7 @@ public:
 	void render(
 		const math::Vec3f viewer_pos, const math::Mat4x4f projection, 
 		const math::Mat4x4f& inv_view, const math::Mat4x4f& rot_inv,
-		const glp::TexCube &cube_map);
+		const glp::TexCube &cube_map, const glp::TexCube &pool_map);
 	void update_model(uint64 usec_time, bool force_one_step);
 	void touch(int x, int y, double strength, double distance);
 	~WaterSurface();

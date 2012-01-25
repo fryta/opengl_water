@@ -202,9 +202,25 @@ bool MainForm::init()
 	if(!glpx::LoadTexCube_RGBA(m_skybox_cubemap, glp::TexCubeBase::CF_Z_NEG, L"data/textures/skybox/vanilla_sky_bk.jpg"))
 		return false;
 	
+	m_poolbox_cubemap.init();
+	if(!glpx::LoadTexCube_RGBA(m_poolbox_cubemap, glp::TexCubeBase::CF_X_POS, L"data/textures/cubemap_grid_256.png"))
+		return false;
+	if(!glpx::LoadTexCube_RGBA(m_poolbox_cubemap, glp::TexCubeBase::CF_X_NEG, L"data/textures/cubemap_grid_256.png"))
+		return false;
+	if(!glpx::LoadTexCube_RGBA(m_poolbox_cubemap, glp::TexCubeBase::CF_Y_POS, L"data/textures/cubemap_grid_256.png"))
+		return false;
+	if(!glpx::LoadTexCube_RGBA(m_poolbox_cubemap, glp::TexCubeBase::CF_Y_NEG, L"data/textures/cubemap_grid_256.png"))
+		return false;
+	if(!glpx::LoadTexCube_RGBA(m_poolbox_cubemap, glp::TexCubeBase::CF_Z_POS, L"data/textures/cubemap_grid_256.png"))
+		return false;
+	if(!glpx::LoadTexCube_RGBA(m_poolbox_cubemap, glp::TexCubeBase::CF_Z_NEG, L"data/textures/cubemap_grid_256.png"))
+		return false;
+	
 	m_skybox_cubemap.set_wrapSTR(glp::Tex::WrapMode::WM_CLAMP_TO_EDGE);
 	m_skybox_cubemap.gen_mipmaps();
-	
+
+	//m_poolbox_cubemap.set_wrapSTR(glp::Tex::WrapMode::WM_CLAMP_TO_EDGE);
+
 	glp::Device::enable_cubemap_seamless();
 
 	glp::Device::enable_multisample();
@@ -439,7 +455,7 @@ void MainForm::update(uint64 usecTime)
 	math::rotate(rot_only_inv, 0, 2, -m_cameraRotY);
 	math::rotate(rot_only_inv, 1, 2, -m_cameraRotX);
 	rot_only_inv = math::invert(rot_only_inv);
-	m_water->render(m_cameraPos, m_proj, invView, rot_only_inv, m_skybox_cubemap);
+	m_water->render(m_cameraPos, m_proj, invView, rot_only_inv, m_skybox_cubemap, m_poolbox_cubemap);
 
 	
 	glp::Device::bind_program(m_skybox_prog);

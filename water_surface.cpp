@@ -237,7 +237,7 @@ bool WaterSurface::init_render_programs()
 void WaterSurface::render(
 	const math::Vec3f viewer_pos, const math::Mat4x4f projection,
 	const math::Mat4x4f& inv_view, const math::Mat4x4f& rot_inv,
-	const glp::TexCube &cube_map)
+	const glp::TexCube &cube_map, const glp::TexCube &pool_map)
 {
 	glp::Device::bind_program(m_water_render_prog);
 	
@@ -247,15 +247,18 @@ void WaterSurface::render(
 
 	glp::Device::bind_tex(*m_act_height_tex, 4);
 	glp::Device::bind_tex(cube_map, 5);
+	glp::Device::bind_tex(pool_map, 6);
 
 	m_water_render_prog.uniform("wave_height", 4);
 	m_water_render_prog.uniform("cube_map", 5);
+	m_water_render_prog.uniform("pool_map", 6);
 	m_water_render_prog.uniform_mat4x4("model", m_model_mat.m, true);
 	m_water_render_prog.uniform_mat4x4("modelView", (inv_view*m_model_mat).m, true);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	m_plane->render(true);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glp::Device::unbind_tex(cube_map, 5);
+	glp::Device::unbind_tex(pool_map, 6);
 	glp::Device::unbind_tex(*m_act_height_tex, 4);
 	glp::Device::unbind_program(m_water_render_prog);
 }
