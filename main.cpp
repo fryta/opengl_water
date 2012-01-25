@@ -163,7 +163,7 @@ bool MainForm::init()
 		return false;
 	if (!ren->addTextures("base", L"data/textures/simple_diff.jpg", nullptr, nullptr))
 		return false;
-
+		
 	m_objects.push_back(ren);
 	m_instances.push_back(std::make_pair(math::Mat4x4f(math::Mat4x4f::I), ren));
 
@@ -176,7 +176,7 @@ bool MainForm::init()
 	m_objects.push_back(ren);
 	m_instances.push_back(std::make_pair(math::Mat4x4f(math::Mat4x4f::I), ren));
 
-	m_water = new WaterSurface(8.0f, 4.0f, -0.07f, 800, 400, 0.4f, 0.01f, 0.995f, 10000);
+	m_water = new WaterSurface(8.0f, 4.0f, -0.07f, 400, 200, 0.4f, 0.01f, 0.995f, 10000);
 	if(!m_water->init())
 		return false;
 

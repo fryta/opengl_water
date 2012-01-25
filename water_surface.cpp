@@ -25,6 +25,9 @@ WaterSurface::WaterSurface(
 	m_step = usec_step_time;
 
 	m_plane = nullptr;
+
+	m_air_refract_index = 1.000293f;
+	m_water_refract_index = 1.22f;
 }
 
 WaterSurface::~WaterSurface()
@@ -148,6 +151,12 @@ bool WaterSurface::init_render_programs()
 		m_water_render_prog.uniform_vec2("size", math::Vec2f(m_grid_x, m_grid_z).m);
 		m_water_render_prog.uniform("h_x", m_dim_x / m_grid_x);
 		m_water_render_prog.uniform("h_z", m_dim_z / m_grid_z);
+
+		// calculate uniform for Fresnel equation approximation
+		float eta = m_air_refract_index / m_water_refract_index; // n1/n2 <- refract index of air/water
+		float f = ((1 - eta) * (1 - eta)) / ((1 + eta) * (1 + eta)); // equation given in OpenGL shading language, site 359
+		m_water_render_prog.uniform("f", f);
+		m_water_render_prog.uniform("eta", eta);
 	}
 
 	// GPGPU shaders
@@ -238,6 +247,7 @@ void WaterSurface::render(
 
 	glp::Device::bind_tex(*m_act_height_tex, 4);
 	glp::Device::bind_tex(cube_map, 5);
+
 	m_water_render_prog.uniform("wave_height", 4);
 	m_water_render_prog.uniform("cube_map", 5);
 	m_water_render_prog.uniform_mat4x4("model", m_model_mat.m, true);

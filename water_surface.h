@@ -38,6 +38,10 @@ private:
 	float m_damp_factor;
 	uint64 m_step;
 
+	// water and air refract indexes
+	float m_air_refract_index;
+	float m_water_refract_index;
+
 	// initialized in the init() method
 	float m_cell_size_x;
 	float m_cell_size_y;

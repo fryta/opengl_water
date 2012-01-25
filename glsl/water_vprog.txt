@@ -13,6 +13,8 @@ out vec3 tgtUWorld;
 out vec3 tgtVWorld;
 out vec2 texcoord;
 out vec3 reflection_coord;
+out vec3 refraction_coord;
+out float refraction_ratio;
 
 uniform mat4 model;
 uniform mat4 modelView;
@@ -25,6 +27,8 @@ uniform sampler2D wave_height;
 uniform vec2 size;
 uniform float h_x;
 uniform float h_z;
+uniform float f; // const needed in fresnel equation approximation
+uniform float eta;
 
 void main()
 {
@@ -52,11 +56,16 @@ void main()
 	tgtVWorld   = (model*vec4(tgtV, 0.0)).xyz;
 	texcoord = coord;
 
-	
 	vec3 normalEye = (modelView*vec4(normal_calc, 0.0)).xyz; // 0.0 -> without translation
 	vec3 vertexEye = (modelView*vec4(newPoint, 1.0)).xyz; // 1.0 -> with translation
-	vec4 ref = rot_inv * vec4(reflect(vertexEye, normalEye), 1.0);
-	reflection_coord = normalize(ref.xyz);
+
+	vec4 reflection = rot_inv * vec4(reflect(vertexEye, normalEye), 1.0);
+	reflection_coord = normalize(reflection.xyz);
+
+	vec4 refraction = rot_inv * vec4(refract(vertexEye, normalEye, eta), 1.0);
+	refraction_coord = normalize(refraction.xyz);
+
+	refraction_ratio = f + (1 - f) * pow(1 - dot(-normalize(vertexEye), normalEye), 5);
 	
 	gl_Position = proj*modelView*vec4(newPoint, 1.0);
 }
