@@ -219,14 +219,13 @@ bool MainForm::init()
 	m_skybox_cubemap.set_wrapSTR(glp::Tex::WrapMode::WM_CLAMP_TO_EDGE);
 	m_skybox_cubemap.gen_mipmaps();
 
-	//m_poolbox_cubemap.set_wrapSTR(glp::Tex::WrapMode::WM_CLAMP_TO_EDGE);
-
 	glp::Device::enable_cubemap_seamless();
 
 	glp::Device::enable_multisample();
 	glClearDepth(1.0);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0);
 	assert(glGetError() == GL_NO_ERROR);
+
 	show();
 	return true;
 }
@@ -455,6 +454,7 @@ void MainForm::update(uint64 usecTime)
 	math::rotate(rot_only_inv, 0, 2, -m_cameraRotY);
 	math::rotate(rot_only_inv, 1, 2, -m_cameraRotX);
 	rot_only_inv = math::invert(rot_only_inv);
+
 	m_water->render(m_cameraPos, m_proj, invView, rot_only_inv, m_skybox_cubemap, m_poolbox_cubemap);
 
 	

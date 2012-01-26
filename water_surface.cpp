@@ -157,6 +157,8 @@ bool WaterSurface::init_render_programs()
 		float f = ((1 - eta) * (1 - eta)) / ((1 + eta) * (1 + eta)); // equation given in OpenGL shading language, site 359
 		m_water_render_prog.uniform("f", f);
 		m_water_render_prog.uniform("eta", eta);
+
+		m_water_render_prog.uniform("water_y_pos", m_pos_y);
 	}
 
 	// GPGPU shaders

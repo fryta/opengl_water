@@ -57,7 +57,6 @@ private:
 	Renderable* m_skybox;
 	glp::TexCube m_skybox_cubemap;
 
-	Renderable* m_poolbox;
 	glp::TexCube m_poolbox_cubemap;
 
 	// Camera data

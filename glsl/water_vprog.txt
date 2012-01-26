@@ -29,6 +29,9 @@ uniform float h_x;
 uniform float h_z;
 uniform float f; // const needed in fresnel equation approximation
 uniform float eta;
+uniform float water_y_pos;
+
+uniform vec3 viewerPos;
 
 void main()
 {
@@ -65,7 +68,11 @@ void main()
 	vec4 refraction = rot_inv * vec4(refract(vertexEye, normalEye, eta), 1.0);
 	refraction_coord = normalize(refraction.xyz);
 
-	refraction_ratio = f + (1 - f) * pow(1 - dot(-normalize(vertexEye), normalEye), 5);
+	if(viewerPos.y < water_y_pos){
+		refraction_ratio = f + (1 - f) * pow(1 - dot(normalize(vertexEye), normalEye), 5);
+	} else {
+		refraction_ratio = f + (1 - f) * pow(1 - dot(-normalize(vertexEye), normalEye), 5);
+	}
 	
 	gl_Position = proj*modelView*vec4(newPoint, 1.0);
 }
