@@ -39,7 +39,9 @@ public:
 
 private:
 	void update(uint64 usecTime);
+	void update(uint64 usecTime, bool renderWater);
 	void map_mouse_click_on_plane(int x_pos, int y_pos, float plane_y, float &word_x, float &word_z);
+	//void create_poolbox_cubemap();
 
 	int m_width;
 	int m_height;
@@ -57,8 +59,6 @@ private:
 	Renderable* m_skybox;
 	glp::TexCube m_skybox_cubemap;
 
-	glp::TexCube m_poolbox_cubemap;
-
 	// Camera data
 	float m_tmpTrackRotX;
 	float m_tmpTrackRotY;
@@ -71,6 +71,11 @@ private:
 
 	math::Mat4x4f m_proj;
 	bool m_queryStarted;
+	/*
+	glp::FrameBuffer m_frame_buff;
+	glp::RenderBuffer m_render_buff;
+	FILE * m_logFile;*/
+	glp::TexCube m_poolbox_cubemap;
 };
 
 

@@ -238,13 +238,12 @@ bool WaterSurface::init_render_programs()
 
 void WaterSurface::render(
 	const math::Vec3f viewer_pos, const math::Mat4x4f projection,
-	const math::Mat4x4f& inv_view, const math::Mat4x4f& rot_inv,
+	const math::Mat4x4f& inv_view,
 	const glp::TexCube &cube_map, const glp::TexCube &pool_map)
 {
 	glp::Device::bind_program(m_water_render_prog);
 	
 	m_water_render_prog.uniform_mat4x4("proj", projection.m, true);
-	m_water_render_prog.uniform_mat4x4("rot_inv", rot_inv.m, true);
 	m_water_render_prog.uniform_vec3("viewerPos", viewer_pos.m);
 
 	glp::Device::bind_tex(*m_act_height_tex, 4);

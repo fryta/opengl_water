@@ -176,7 +176,7 @@ bool MainForm::init()
 	m_objects.push_back(ren);
 	m_instances.push_back(std::make_pair(math::Mat4x4f(math::Mat4x4f::I), ren));
 
-	m_water = new WaterSurface(8.0f, 4.0f, -0.07f, 400, 200, 0.4f, 0.01f, 0.995f, 10000);
+	m_water = new WaterSurface(8.0f, 4.0f, -0.07f, 600, 300, 0.4f, 0.01f, 0.995f, 10000);
 	if(!m_water->init())
 		return false;
 
@@ -202,6 +202,9 @@ bool MainForm::init()
 	if(!glpx::LoadTexCube_RGBA(m_skybox_cubemap, glp::TexCubeBase::CF_Z_NEG, L"data/textures/skybox/vanilla_sky_bk.jpg"))
 		return false;
 	
+	m_skybox_cubemap.set_wrapSTR(glp::Tex::WrapMode::WM_CLAMP_TO_EDGE);
+	m_skybox_cubemap.gen_mipmaps();
+
 	m_poolbox_cubemap.init();
 	if(!glpx::LoadTexCube_RGBA(m_poolbox_cubemap, glp::TexCubeBase::CF_X_POS, L"data/textures/cubemap_grid_256.png"))
 		return false;
@@ -216,8 +219,10 @@ bool MainForm::init()
 	if(!glpx::LoadTexCube_RGBA(m_poolbox_cubemap, glp::TexCubeBase::CF_Z_NEG, L"data/textures/cubemap_grid_256.png"))
 		return false;
 	
-	m_skybox_cubemap.set_wrapSTR(glp::Tex::WrapMode::WM_CLAMP_TO_EDGE);
-	m_skybox_cubemap.gen_mipmaps();
+
+	m_poolbox_cubemap.set_wrapSTR(glp::Tex::WrapMode::WM_CLAMP_TO_EDGE);
+	m_poolbox_cubemap.gen_mipmaps();
+
 
 	glp::Device::enable_cubemap_seamless();
 
@@ -227,8 +232,83 @@ bool MainForm::init()
 	assert(glGetError() == GL_NO_ERROR);
 
 	show();
+
 	return true;
 }
+/*
+void MainForm::create_poolbox_cubemap(){
+	math::Vec3f tmpCameraPos = m_cameraPos;
+	float tmpRotX = m_cameraRotX;
+	float tmpRotY = m_cameraRotY;
+
+	m_cameraPos = math::Vec3f(0.0f, -1.0f, 0.0f);
+
+	m_cameraRotX = 0.0f;
+	m_cameraRotY = fmodf(0.5f * math::consts<float>::_2pi, math::consts<float>::_2pi);
+	//m_cameraRotY = fmodf(0.25f * math::consts<float>::_2pi, math::consts<float>::_2pi);
+	//m_cameraRotY = fmodf(-0.25f * math::consts<float>::_2pi, math::consts<float>::_2pi);
+	//m_cameraRotY = fmodf(-0.5f * math::consts<float>::_2pi, math::consts<float>::_2pi);
+
+	glp::Device::bind_program(m_renderProg);
+	ASSERT(glGetError() == GL_NO_ERROR);
+
+	// create and bind Framebuffer object
+	m_frame_buff.init();
+	ASSERT(glGetError() == GL_NO_ERROR);
+
+	// create and bind pool cubemap 
+	m_poolbox_cubemap.init();
+	glp::Device::bind_tex(m_poolbox_cubemap);
+	ASSERT(glGetError() == GL_NO_ERROR);
+
+	m_frame_buff.attach_tex_face(m_poolbox_cubemap, glp::TexCubeBase::CF_X_POS);
+	ASSERT(glGetError() == GL_NO_ERROR);
+
+	glp::Device::bind_fbuff(m_frame_buff);
+	ASSERT(glGetError() == GL_NO_ERROR);
+
+	glClear(GL_COLOR_BUFFER_BIT); 
+	ASSERT(glGetError() == GL_NO_ERROR);
+	//update(0, false);
+
+	glp::Device::unbind_fbuff(m_frame_buff);
+	ASSERT(glGetError() == GL_NO_ERROR);
+
+	//m_frame_buff.detach_tex_face(glp::TexCubeBase::CF_X_POS);
+	//int error = glGetError();
+	//fprintf(m_logFile, "%d\n", error);
+	//ASSERT(error == GL_NO_ERROR);
+
+	glp::Device::unbind_tex(m_poolbox_cubemap);
+	ASSERT(glGetError() == GL_NO_ERROR);
+
+	glp::Device::unbind_program(m_renderProg);
+	ASSERT(glGetError() == GL_NO_ERROR);
+	
+	
+	
+	//if(!glpx::LoadTexCube_RGBA(m_poolbox_cubemap, glp::TexCubeBase::CF_X_POS, L"data/textures/cubemap_grid_256.png"))
+	//	return false;
+	//if(!glpx::LoadTexCube_RGBA(m_poolbox_cubemap, glp::TexCubeBase::CF_X_NEG, L"data/textures/cubemap_grid_256.png"))
+	//	return false;
+	//if(!glpx::LoadTexCube_RGBA(m_poolbox_cubemap, glp::TexCubeBase::CF_Y_POS, L"data/textures/cubemap_grid_256.png"))
+	//	return false;
+	//if(!glpx::LoadTexCube_RGBA(m_poolbox_cubemap, glp::TexCubeBase::CF_Y_NEG, L"data/textures/cubemap_grid_256.png"))
+	//	return false;
+	//if(!glpx::LoadTexCube_RGBA(m_poolbox_cubemap, glp::TexCubeBase::CF_Z_POS, L"data/textures/cubemap_grid_256.png"))
+	//	return false;
+	//if(!glpx::LoadTexCube_RGBA(m_poolbox_cubemap, glp::TexCubeBase::CF_Z_NEG, L"data/textures/cubemap_grid_256.png"))
+	//	return false;
+	
+
+	m_poolbox_cubemap.set_wrapSTR(glp::Tex::WrapMode::WM_CLAMP_TO_EDGE);
+	m_poolbox_cubemap.gen_mipmaps();
+	ASSERT(glGetError() == GL_NO_ERROR);
+
+	m_cameraPos = tmpCameraPos;
+	m_cameraRotX = tmpRotX;
+	m_cameraRotY = tmpRotY;
+}*/
 
 void MainForm::release()
 {
@@ -241,6 +321,9 @@ void MainForm::release()
 	delete m_skybox;
 	m_renderProg.release();
 	m_dev.release();
+
+	m_skybox_cubemap.release();
+	m_poolbox_cubemap.release();
 }
 
 
@@ -290,6 +373,7 @@ void MainForm::on_size(int width, int height)
 		math::Vec2f(-m_fov*float(width)/float(height), -m_fov),
 		math::Vec2f( m_fov*float(width)/float(height),  m_fov),
 		0.125f, 256.0f);
+
 
 	ASSERT(glGetError() == GL_NO_ERROR);
 }
@@ -426,21 +510,24 @@ void MainForm::on_destroy()
 	quit_main_loop();
 }
 
-
 void MainForm::update(uint64 usecTime)
 {
 	glp::Device::bind_program(m_renderProg);
+	
 
 	glp::Device::enable_depth_test();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+	ASSERT(glGetError() == GL_NO_ERROR);
 
 	math::Mat4x4f invView;
 	math::set_translation(invView, -m_cameraPos);
 	math::rotate(invView, 0, 2, -m_cameraRotY);
 	math::rotate(invView, 1, 2, -m_cameraRotX);
-
+	
 	m_renderProg.uniform_mat4x4("proj", m_proj.m, true);
 	m_renderProg.uniform_vec3("viewerPos", m_cameraPos.m);
+
 	for (size_t a = 0; a < m_instances.size(); ++a)
 	{
 		m_renderProg.uniform_mat4x4("model", m_instances[a].first.m, true);
@@ -450,13 +537,8 @@ void MainForm::update(uint64 usecTime)
 	
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	math::Mat4x4f rot_only_inv = math::Mat4x4f(math::Mat4x4f::I);
-	math::rotate(rot_only_inv, 0, 2, -m_cameraRotY);
-	math::rotate(rot_only_inv, 1, 2, -m_cameraRotX);
-	rot_only_inv = math::invert(rot_only_inv);
 
-	m_water->render(m_cameraPos, m_proj, invView, rot_only_inv, m_skybox_cubemap, m_poolbox_cubemap);
-
+	m_water->render(m_cameraPos, m_proj, invView, m_skybox_cubemap, m_poolbox_cubemap);
 	
 	glp::Device::bind_program(m_skybox_prog);
 	glp::Device::bind_tex(m_skybox_cubemap, 3);
