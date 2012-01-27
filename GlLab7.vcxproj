@@ -199,6 +199,8 @@
   <ItemGroup>
     <None Include="glsl\calc_wave_fprog.txt" />
     <None Include="glsl\calc_wave_vprog.txt" />
+    <None Include="glsl\caustics_fprog.txt" />
+    <None Include="glsl\caustics_vprog.txt" />
     <None Include="glsl\illum_fprog.txt" />
     <None Include="glsl\illum_vprog.txt" />
     <None Include="glsl\skybox.fp" />

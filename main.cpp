@@ -169,7 +169,7 @@ bool MainForm::init()
 	m_objects.push_back(ren);
 	m_instances.push_back(std::make_pair(math::Mat4x4f(math::Mat4x4f::I), ren));
 
-	m_water = new WaterSurface(8.0f, 4.0f, -0.07f, 400, 200, 0.4f, 0.01f, 0.995f, 10000);
+	m_water = new WaterSurface(8.0f, 4.0f, -0.07f, 600, 300, 0.4f, 0.01f, 0.995f, 10000);
 	if(!m_water->init())
 		return false;
 
@@ -399,15 +399,12 @@ void MainForm::update(uint64 usecTime)
 		m_instances[a].second->render(true);
 	}
 	
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	math::Mat4x4f rot_only_inv = math::Mat4x4f(math::Mat4x4f::I);
 	math::rotate(rot_only_inv, 0, 2, -m_cameraRotY);
 	math::rotate(rot_only_inv, 1, 2, -m_cameraRotX);
 	rot_only_inv = math::invert(rot_only_inv);
 	m_water->render(m_cameraPos, m_proj, invView, rot_only_inv, m_skybox_cubemap);
 
-	
 	glp::Device::bind_program(m_skybox_prog);
 	glp::Device::bind_tex(m_skybox_cubemap, 3);
 	m_skybox_prog.uniform("cubeMap", 3);

@@ -45,6 +45,7 @@ bool WaterSurface::init()
 	m_last_call = 0;
 
 	m_model_mat = math::Mat4x4f(math::Mat4x4f::I);
+	m_caustics_model_mat = math::Mat4x4f(math::Mat4x4f::I);
 	
 	m_plane = new Renderable();
 	if (!m_plane->load_grid(m_dim_x/2.0f, m_dim_z/2.0f, m_pos_y, m_grid_x, m_grid_z, 1.0f, 1.0f))
@@ -57,6 +58,14 @@ bool WaterSurface::init()
 		fprintf(stderr, "Loading texture for plane failed.\n");
 		return false;
 	}
+
+	// light texture for caustics
+	m_sunlight_tex.init();
+	if (!glpx::LoadTex2D_RGBA(m_sunlight_tex, L"data/textures/sunlight.jpg")) {
+		fprintf(stderr, "Loading sunlight texture failed.\n");
+		return false;
+	}
+	m_sunlight_tex.set_wrapST(glp::Tex::WrapMode::WM_CLAMP_TO_EDGE);
 
 	m_frame_buff.init();
 
@@ -128,8 +137,6 @@ bool WaterSurface::init_render_programs()
 		m_water_render_prog.bind_attrib_loc("point", Renderable::ATTR_LOC_POINT);
 		m_water_render_prog.bind_attrib_loc("coord", Renderable::ATTR_LOC_COORD);
 		m_water_render_prog.bind_attrib_loc("normal", Renderable::ATTR_LOC_NORMAL);
-		m_water_render_prog.bind_attrib_loc("tgtU", Renderable::ATTR_LOC_TGT_U);
-		m_water_render_prog.bind_attrib_loc("tgtV", Renderable::ATTR_LOC_TGT_V);
 
 		if (!m_water_render_prog.link())
 		{
@@ -143,11 +150,61 @@ bool WaterSurface::init_render_programs()
 		}
 
 		m_water_render_prog.uniform("texDiff", 0);
-		m_water_render_prog.uniform("texNormal", 1);
-		m_water_render_prog.uniform("texHeight", 2);
 		m_water_render_prog.uniform_vec2("size", math::Vec2f(m_grid_x, m_grid_z).m);
 		m_water_render_prog.uniform("h_x", m_dim_x / m_grid_x);
 		m_water_render_prog.uniform("h_z", m_dim_z / m_grid_z);
+	}
+
+	// caustics shaders
+	{
+		glp::VertProgram vprog;
+		vprog.init();
+		glpx::program_set_source_file(vprog, "glsl/caustics_vprog.txt");
+		if (!vprog.compile())
+		{
+			glpx::ProgramLog pl;
+			MessageBoxA(NULL, glpx::get_log(vprog, pl),
+				"VERTEX PROGRAM ERROR", MB_OK | MB_ICONSTOP);
+			vprog.release();
+			return false;
+		}
+
+		glp::FragProgram fprog;
+		fprog.init();
+		glpx::program_set_source_file(fprog, "glsl/caustics_fprog.txt");
+		if (!fprog.compile())
+		{
+			glpx::ProgramLog pl;
+			MessageBoxA(nullptr, glpx::get_log(fprog, pl),
+				"FRAGMENT PROGRAM ERROR", MB_OK | MB_ICONSTOP);
+			fprog.release();
+			vprog.release();
+			return false;
+		}
+
+		m_caustics_prog.init();
+		m_caustics_prog.attach(vprog);
+		m_caustics_prog.attach(fprog);
+
+		m_caustics_prog.bind_attrib_loc("point", Renderable::ATTR_LOC_POINT);
+		m_caustics_prog.bind_attrib_loc("coord", Renderable::ATTR_LOC_COORD);
+		m_caustics_prog.bind_attrib_loc("normal", Renderable::ATTR_LOC_NORMAL);
+
+		if (!m_caustics_prog.link())
+		{
+			glpx::ProgramLog pl;
+			MessageBoxA(nullptr, glpx::get_log(m_water_render_prog, pl),
+				"PROGRAM LINK ERROR", MB_OK | MB_ICONSTOP);
+			m_water_render_prog.release();
+			fprog.release();
+			vprog.release();
+			return false;
+		}
+
+		m_caustics_prog.uniform_vec2("size", math::Vec2f(m_grid_x, m_grid_z).m);
+		m_caustics_prog.uniform_vec2("dim", math::Vec2f(m_dim_x, m_dim_z).m);
+		m_caustics_prog.uniform("h_x", m_dim_x / m_grid_x);
+		m_caustics_prog.uniform("h_z", m_dim_z / m_grid_z);
 	}
 
 	// GPGPU shaders
@@ -230,6 +287,32 @@ void WaterSurface::render(
 	const math::Mat4x4f& inv_view, const math::Mat4x4f& rot_inv,
 	const glp::TexCube &cube_map)
 {
+	// caustics render
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glp::Device::bind_program(m_caustics_prog);
+	m_caustics_prog.uniform_mat4x4("proj", projection.m, true);
+	m_caustics_prog.uniform_vec3("viewerPos", viewer_pos.m);
+
+	glp::Device::bind_tex(*m_act_height_tex, 4);
+	glp::Device::bind_tex(m_sunlight_tex, 5);
+
+	m_caustics_prog.uniform("wave_height", 4);
+	m_caustics_prog.uniform("tex_light", 5);
+
+	math::set_translation(m_caustics_model_mat, math::Vec3f(0.0f, -1.925f, 0.0f));
+	m_caustics_prog.uniform_mat4x4("model", m_caustics_model_mat.m, true);
+	m_caustics_prog.uniform_mat4x4("modelView", (inv_view*m_caustics_model_mat).m, true);
+
+	m_plane->render(true);
+
+	glp::Device::unbind_tex(m_sunlight_tex, 5);
+	glp::Device::unbind_tex(*m_act_height_tex, 4);
+	glp::Device::unbind_program(m_caustics_prog);
+
+	// water render
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glp::Device::bind_program(m_water_render_prog);
 	
 	m_water_render_prog.uniform_mat4x4("proj", projection.m, true);
@@ -248,6 +331,8 @@ void WaterSurface::render(
 	glp::Device::unbind_tex(cube_map, 5);
 	glp::Device::unbind_tex(*m_act_height_tex, 4);
 	glp::Device::unbind_program(m_water_render_prog);
+
+	glDisable(GL_BLEND);
 }
 
 void WaterSurface::update_model(uint64 usec_time, bool force_one_step)

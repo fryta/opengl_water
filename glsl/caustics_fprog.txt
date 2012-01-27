@@ -1,0 +1,18 @@
+#version 330
+
+
+uniform sampler2D tex_light;
+
+in vec3 pointWorld;
+in vec3 normalWorld;
+in vec2 texcoord;
+
+out vec4 rslt;
+
+
+void main()
+{
+	vec3 kA = texture(tex_light, texcoord).rgb;
+
+	rslt = vec4((vec3(1) - kA)*0.7, 0.5);
+}

@@ -45,10 +45,12 @@ private:
 	uint64 m_last_call;
 
 	math::Mat4x4f m_model_mat;
+	math::Mat4x4f m_caustics_model_mat;
 	Renderable* m_plane;
 
 	// render program
 	glp::Program m_water_render_prog;
+	glp::Program m_caustics_prog;
 
 	glp::FrameBuffer m_frame_buff;
 	//glp::RenderBuffer m_render_buff;
@@ -66,6 +68,7 @@ private:
 	glp::Tex2D* m_act_velocity_tex;
 	glp::Tex2D* m_new_velocity_tex;
 
+	glp::Tex2D m_sunlight_tex;
 };
 
 #endif
