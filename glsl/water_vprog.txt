@@ -8,10 +8,6 @@ in vec3 normal;
 out vec3 pointWorld;
 out vec3 normalWorld;
 out vec2 texcoord;
-out vec3 reflection_coord;
-out vec3 refraction_coord;
-out float refraction_ratio;
-out vec3 refractColor;
 
 uniform mat4 model;
 uniform mat4 modelView;
@@ -25,86 +21,7 @@ uniform sampler2D wave_height;
 uniform vec2 size;
 uniform float h_x;
 uniform float h_z;
-uniform float f; // const needed in fresnel equation approximation
-uniform float eta;
-uniform float water_y_pos;
 
-
-uniform vec3 poolWalls[20] = {vec3(-4.0, 0.0, 2.0), vec3(4.0, 0.0, 2.0), vec3(4.0, -2.0, 2.0), vec3(-4.0, -2.0, 2.0), // front
-							  vec3(-4.0, 0.0, -2.0), vec3(4.0, 0.0, -2.0), vec3(4.0, -2.0, -2.0), vec3(-4.0, -2.0, -2.0), // back
-							  vec3(-4.0, 0.0, -2.0), vec3(-4.0, 0.0, 2.0), vec3(-4.0, -2.0, 2.0), vec3(-4.0, -2.0, -2.0), // left
-							  vec3(4.0, 0.0, -2.0), vec3(4.0, 0.0, 2.0), vec3(4.0, -2.0, 2.0), vec3(4.0, -2.0, -2.0), // right
-							  vec3(-4.0, -2.0, 2.0), vec3(4.0, -2.0, 2.0), vec3(4.0, -2.0, -2.0), vec3(-4.0, -2.0, -2.0)}; // bottom
-
-uniform vec3 poolWallNormals[5] = {vec3(0.0, 0.0, -1.0), // front
-								   vec3(0.0, 0.0, 1.0), // back
-								   vec3(1.0, 0.0, 0.0), // left
-								   vec3(-1.0, 0.0, 0.0), // right
-								   vec3(0.0, 1.0, 0.0)}; // bottom
-
-uniform vec3 poolWallPoints[5] = {vec3(0.0, -1.0, 2.0), // front
-								  vec3(0.0, -1.0, -2.0), // back
-								  vec3(-4.0, -1.0, 0.0), // left
-								  vec3(4.0, -1.0, 0.0), // right
-								  vec3(0.0, -2.0, 0.0)}; // bottom
-
-uniform float eps = 0.0001;
-
-vec3 line_plane_intersection(vec3 planePoint, vec3 planeNormal, vec3 refractPoint, vec3 refractedRay){
-	float numerator = dot(planePoint - refractPoint, planeNormal);
-	float denominator = dot(refractedRay, planeNormal);
-
-	if(denominator == 0.0){// rownolegle 
-		return vec3(0.0, 0.0, 0.0);
-	}
-
-	float distance = numerator / denominator;
-
-	return refractPoint + refractedRay * distance;
-}
-
-int is_intersecting(int wallIndex, vec3 refractPoint, vec3 refractedRay){
-	vec3 intersectionVector = line_plane_intersection(poolWallPoints[wallIndex].xyz,
-													  poolWallNormals[wallIndex].xyz,
-													  refractPoint,
-													  refractedRay);
-
-	// check for paralleism
-	if(intersectionVector == vec3(0.0, 0.0, 0.0)){
-		return -1;
-	}
-	
-	// check x range
-	if(poolWalls[4*wallIndex].x - eps > intersectionVector.x || poolWalls[4*wallIndex + 1].x + eps < intersectionVector.x){
-		return -1;
-	}
-
-	// check y range
-	if(poolWalls[4*wallIndex + 1].y + eps < intersectionVector.y || poolWalls[4*wallIndex + 2].y - eps > intersectionVector.y){
-		return -1;
-	}
-
-	// check z range
-	if(
-		(wallIndex < 4 && (poolWalls[4*wallIndex + 2].z + eps < intersectionVector.z || poolWalls[4*wallIndex + 3].z - eps > intersectionVector.z)) || 
-		(wallIndex == 4 && (poolWalls[4*wallIndex + 1].z + eps < intersectionVector.z || poolWalls[4*wallIndex + 2].z - eps > intersectionVector.z))
-	){
-		return -1;
-	}
-
-	return wallIndex;
-}
-
-int get_intersecting_wall(vec3 refractPoint, vec3 refractedRay){
-	int intersectingTexture = -1;
-	for(int i = 0; i < 5; i++){
-		intersectingTexture = is_intersecting(i, refractPoint, refractedRay);
-		if(intersectingTexture != -1){
-			return intersectingTexture;
-		}
-	}
-	return intersectingTexture;
-}
 
 void main()
 {
@@ -129,39 +46,6 @@ void main()
 	pointWorld  = (model*vec4(newPoint, 1.0)).xyz;
 	normalWorld = (model*vec4(normal_calc, 0.0)).xyz;
 	texcoord = coord;
-
-	//vec3 normalEye = (modelView*vec4(normal_calc, 0.0)).xyz; // 0.0 -> without translation
-	//vec3 vertexEye = (modelView*vec4(newPoint, 1.0)).xyz; // 1.0 -> with translation
-
-	vec3 vertexEye = pointWorld - viewerPos;
-	vec3 normalEye = normalize(normalWorld);
-
-	vec3 reflection = reflect(vertexEye, normalEye);
-	reflection_coord = normalize(reflection);
-
-	vec3 refraction = refract(vertexEye, normalEye, eta);
-	//refraction = refraction * vec3(0.5, 1.0, 1.0);
-	refraction_coord = normalize(refraction);
-
-	int refractWallIndex = get_intersecting_wall(pointWorld, refraction_coord);
-
-	refractColor = vec3(1.0, 1.0, 1.0);
-	if(refractWallIndex == 0)
-		refractColor = vec3(78.0 / 255.0, 34.0 / 255.0, 4.0 / 255.0);
-	if(refractWallIndex == 1)
-		refractColor = vec3(78.0 / 255.0, 34.0 / 255.0, 4.0 / 255.0);
-	if(refractWallIndex == 2)
-		refractColor = vec3(121.0 / 255.0, 56.0 / 255.0, 11.0 / 255.0);
-	if(refractWallIndex == 3)
-		refractColor = vec3(121.0 / 255.0, 56.0 / 255.0, 11.0 / 255.0);
-	if(refractWallIndex == 4)
-		refractColor = vec3(1.0, 129.0 / 255.0, 22.0 / 255.0);
-
-	if(viewerPos.y < water_y_pos){
-		refraction_ratio = f + (1 - f) * pow(1 - dot(normalize(vertexEye), normalEye), 5);
-	} else {
-		refraction_ratio = f + (1 - f) * pow(1 - dot(-normalize(vertexEye), normalEye), 5);
-	}
 	
 	gl_Position = proj*modelView*vec4(newPoint, 1.0);
 }
