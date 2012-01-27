@@ -4,13 +4,9 @@
 in vec3 point;
 in vec2 coord;
 in vec3 normal;
-in vec3 tgtU;
-in vec3 tgtV;
 
 out vec3 pointWorld;
 out vec3 normalWorld;
-out vec3 tgtUWorld;
-out vec3 tgtVWorld;
 out vec2 texcoord;
 out vec3 reflection_coord;
 out vec3 refraction_coord;
@@ -132,8 +128,6 @@ void main()
 
 	pointWorld  = (model*vec4(newPoint, 1.0)).xyz;
 	normalWorld = (model*vec4(normal_calc, 0.0)).xyz;
-	tgtUWorld   = (model*vec4(tgtU, 0.0)).xyz;
-	tgtVWorld   = (model*vec4(tgtV, 0.0)).xyz;
 	texcoord = coord;
 
 	//vec3 normalEye = (modelView*vec4(normal_calc, 0.0)).xyz; // 0.0 -> without translation
@@ -162,8 +156,6 @@ void main()
 		refractColor = vec3(121.0 / 255.0, 56.0 / 255.0, 11.0 / 255.0);
 	if(refractWallIndex == 4)
 		refractColor = vec3(1.0, 129.0 / 255.0, 22.0 / 255.0);
-	if(refractWallIndex == 7)
-		refractColor = vec3(1.0, 0.0, 0.0);
 
 	if(viewerPos.y < water_y_pos){
 		refraction_ratio = f + (1 - f) * pow(1 - dot(normalize(vertexEye), normalEye), 5);

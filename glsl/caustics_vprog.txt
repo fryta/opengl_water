@@ -1,0 +1,53 @@
+#version 330
+
+in vec3 point;
+in vec2 coord;
+in vec3 normal;
+
+out vec3 pointWorld;
+out vec3 normalWorld;
+out vec2 texcoord;
+
+uniform mat4 model;
+uniform mat4 modelView;
+uniform mat4 proj;
+
+uniform sampler2D tex_light;
+uniform sampler2D wave_height;
+
+uniform vec2 size;
+uniform vec2 dim;
+uniform float h_x;
+uniform float h_z;
+
+void main()
+{
+	//### calculate normal according to wave height
+	vec2 coords_left = coord + vec2(-1.0, 0.0)/size;
+	vec2 coords_right = coord + vec2(1.0, 0.0)/size;
+	vec2 coords_up = coord + vec2(0.0, 1.0)/size;
+	vec2 coords_down = coord + vec2(0.0, -1.0)/size;
+	
+	float u = texture(wave_height, coord).r;
+	float u_left = texture(wave_height, coords_left).r;
+	float u_right = texture(wave_height, coords_right).r;
+	float u_up = texture(wave_height, coords_up).r;
+	float u_down = texture(wave_height, coords_down).r;
+	
+	vec3 n1 = vec3(h_x*2.0, (u_right - u_left), 0.0);
+	vec3 n2 = vec3(0.0, u_up - u_down, h_z*2.0);
+	vec3 normal_calc = normalize(cross(n2, n1));
+	//###
+	vec3 newPoint = vec3(point.x, point.y + u, point.z);
+
+	pointWorld  = (model*vec4(newPoint, 1.0)).xyz;
+	normalWorld = (model*vec4(normal_calc, 0.0)).xyz;
+
+	float dist = (25 - newPoint.y) / normal_calc.y; 
+	vec3 inter_point = dist * normal_calc  + newPoint;
+	
+	vec2 tx = ((inter_point.xz + dim/2) / dim) - vec2(0.5, 0.5);
+	texcoord = vec2(0.5, 0.5) + 0.1*tx;
+	
+	gl_Position = proj*modelView*vec4(point, 1.0);
+}

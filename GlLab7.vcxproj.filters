@@ -211,5 +211,11 @@
     <None Include="glsl\skybox.vp">
       <Filter>GLSL</Filter>
     </None>
+    <None Include="glsl\caustics_fprog.txt">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="glsl\caustics_vprog.txt">
+      <Filter>GLSL</Filter>
+    </None>
   </ItemGroup>
 </Project>
