@@ -2,6 +2,7 @@
 
 
 uniform sampler2D texDiff;
+uniform sampler2D pool_tex;
 uniform samplerCube cube_map;
 uniform samplerCube pool_map;
 uniform vec3 lightPos = vec3(0.0, 10.0, 0.0);
@@ -38,6 +39,8 @@ uniform vec3 poolWallPoints[5] = {vec3(0.0, -1.0, 2.0), // front
 
 uniform float eps = 0.0001;
 
+vec3 intersectionVector;
+
 vec3 line_plane_intersection(vec3 planePoint, vec3 planeNormal, vec3 refractPoint, vec3 refractedRay){
 	float numerator = dot(planePoint - refractPoint, planeNormal);
 	float denominator = dot(refractedRay, planeNormal);
@@ -52,7 +55,7 @@ vec3 line_plane_intersection(vec3 planePoint, vec3 planeNormal, vec3 refractPoin
 }
 
 int is_intersecting(int wallIndex, vec3 refractPoint, vec3 refractedRay){
-	vec3 intersectionVector = line_plane_intersection(poolWallPoints[wallIndex].xyz,
+	intersectionVector = line_plane_intersection(poolWallPoints[wallIndex].xyz,
 													  poolWallNormals[wallIndex].xyz,
 													  refractPoint,
 													  refractedRay);
@@ -94,6 +97,22 @@ int get_intersecting_wall(vec3 refractPoint, vec3 refractedRay){
 	return intersectingTexture;
 }
 
+vec2 castIntersectionCoords(int refractWallIndex){
+	vec2 intersectionTexCoords;
+
+	if(refractWallIndex == 0 || refractWallIndex == 1){ // front & back
+		intersectionTexCoords.x = (intersectionVector.x + 4.0) / 4.0;
+		intersectionTexCoords.y = (intersectionVector.y + 2.0) / 2.0;
+	} else if(refractWallIndex == 2 || refractWallIndex == 3){ // left & right wall
+		intersectionTexCoords.x = (intersectionVector.z + 2.0) / 4.0;
+		intersectionTexCoords.y = (intersectionVector.y + 2.0) / 2.0;
+	} else { // bottom
+		intersectionTexCoords.x = (intersectionVector.x + 4.0) / 4.0;
+		intersectionTexCoords.y = (intersectionVector.z + 2.0) / 4.0;
+	}
+	return intersectionTexCoords;
+}
+
 void main()
 {
 	vec3 N = normalize(normalWorld);
@@ -117,7 +136,10 @@ void main()
 	int refractWallIndex = get_intersecting_wall(pointWorld, refraction_coord);
 
 	vec3 refractColor = vec3(1.0, 1.0, 1.0);
-	if(refractWallIndex == 0)
+	if(refractWallIndex != -1)
+		refractColor = texture(pool_tex, castIntersectionCoords(refractWallIndex)).rgb;
+
+	/*if(refractWallIndex == 0)
 		refractColor = vec3(78.0 / 255.0, 34.0 / 255.0, 4.0 / 255.0);
 	if(refractWallIndex == 1)
 		refractColor = vec3(78.0 / 255.0, 34.0 / 255.0, 4.0 / 255.0);
@@ -126,7 +148,7 @@ void main()
 	if(refractWallIndex == 3)
 		refractColor = vec3(121.0 / 255.0, 56.0 / 255.0, 11.0 / 255.0);
 	if(refractWallIndex == 4)
-		refractColor = vec3(1.0, 129.0 / 255.0, 22.0 / 255.0);
+		refractColor = vec3(1.0, 129.0 / 255.0, 22.0 / 255.0);*/
 
 	float refraction_ratio;
 	vec3 kA; 

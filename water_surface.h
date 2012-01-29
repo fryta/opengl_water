@@ -14,7 +14,7 @@ public:
 	void render(
 		const math::Vec3f viewer_pos, const math::Mat4x4f projection, 
 		const math::Mat4x4f& inv_view,
-		const glp::TexCube &cube_map, const glp::TexCube &pool_map);
+		const glp::TexCube &cube_map);
 	void update_model(uint64 usec_time, bool force_one_step);
 	void touch(int x, int y, double strength, double distance);
 	~WaterSurface();
@@ -73,6 +73,7 @@ private:
 	glp::Tex2D* m_new_velocity_tex;
 
 	glp::Tex2D m_sunlight_tex;
+	glp::Tex2D m_pool_tex;
 };
 
 #endif

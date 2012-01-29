@@ -75,7 +75,6 @@ private:
 	glp::FrameBuffer m_frame_buff;
 	glp::RenderBuffer m_render_buff;
 	FILE * m_logFile;*/
-	glp::TexCube m_poolbox_cubemap;
 };
 
 

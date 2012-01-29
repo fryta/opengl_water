@@ -62,6 +62,14 @@ bool WaterSurface::init()
 		return false;
 	}
 
+	// pool texture 
+	m_pool_tex.init();
+	if (!glpx::LoadTex2D_RGBA(m_pool_tex, L"data/textures/cubemap_grid_256.png")) {
+		fprintf(stderr, "Loading pool texture failed.\n");
+		return false;
+	}
+	m_pool_tex.set_wrapST(glp::Tex::WrapMode::WM_REPEAT);
+
 	// light texture for caustics
 	m_sunlight_tex.init();
 	if (!glpx::LoadTex2D_RGBA(m_sunlight_tex, L"data/textures/sunlight.jpg")) {
@@ -296,7 +304,7 @@ bool WaterSurface::init_render_programs()
 void WaterSurface::render(
 	const math::Vec3f viewer_pos, const math::Mat4x4f projection,
 	const math::Mat4x4f& inv_view,
-	const glp::TexCube &cube_map, const glp::TexCube &pool_map)
+	const glp::TexCube &cube_map)
 {
 	
 
@@ -309,23 +317,23 @@ void WaterSurface::render(
 
 	glp::Device::bind_tex(*m_act_height_tex, 4);
 	glp::Device::bind_tex(cube_map, 5);
-	glp::Device::bind_tex(pool_map, 6);
+	glp::Device::bind_tex(m_pool_tex, 6);
 
 	m_water_render_prog.uniform("wave_height", 4);
 	m_water_render_prog.uniform("cube_map", 5);
-	m_water_render_prog.uniform("pool_map", 6);
+	m_water_render_prog.uniform("pool_tex", 6);
 	m_water_render_prog.uniform_mat4x4("model", m_model_mat.m, true);
 	m_water_render_prog.uniform_mat4x4("modelView", (inv_view*m_model_mat).m, true);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	m_plane->render(true);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glp::Device::unbind_tex(cube_map, 5);
-	glp::Device::unbind_tex(pool_map, 6);
+	glp::Device::unbind_tex(m_pool_tex, 6);
 	glp::Device::unbind_tex(*m_act_height_tex, 4);
 	glp::Device::unbind_program(m_water_render_prog);
 
 	// caustics render
-	/*
+	
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -349,7 +357,7 @@ void WaterSurface::render(
 	glp::Device::unbind_tex(*m_act_height_tex, 4);
 	glp::Device::unbind_program(m_caustics_prog);
 	glDisable(GL_BLEND);
-	*/
+	
 }
 
 void WaterSurface::update_model(uint64 usec_time, bool force_one_step)

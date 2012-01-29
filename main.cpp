@@ -205,24 +205,6 @@ bool MainForm::init()
 	m_skybox_cubemap.set_wrapSTR(glp::Tex::WrapMode::WM_CLAMP_TO_EDGE);
 	m_skybox_cubemap.gen_mipmaps();
 
-	m_poolbox_cubemap.init();
-	if(!glpx::LoadTexCube_RGBA(m_poolbox_cubemap, glp::TexCubeBase::CF_X_POS, L"data/textures/cubemap_grid_256.png"))
-		return false;
-	if(!glpx::LoadTexCube_RGBA(m_poolbox_cubemap, glp::TexCubeBase::CF_X_NEG, L"data/textures/cubemap_grid_256.png"))
-		return false;
-	if(!glpx::LoadTexCube_RGBA(m_poolbox_cubemap, glp::TexCubeBase::CF_Y_POS, L"data/textures/cubemap_grid_256.png"))
-		return false;
-	if(!glpx::LoadTexCube_RGBA(m_poolbox_cubemap, glp::TexCubeBase::CF_Y_NEG, L"data/textures/cubemap_grid_256.png"))
-		return false;
-	if(!glpx::LoadTexCube_RGBA(m_poolbox_cubemap, glp::TexCubeBase::CF_Z_POS, L"data/textures/cubemap_grid_256.png"))
-		return false;
-	if(!glpx::LoadTexCube_RGBA(m_poolbox_cubemap, glp::TexCubeBase::CF_Z_NEG, L"data/textures/cubemap_grid_256.png"))
-		return false;
-	
-
-	m_poolbox_cubemap.set_wrapSTR(glp::Tex::WrapMode::WM_CLAMP_TO_EDGE);
-	m_poolbox_cubemap.gen_mipmaps();
-
 
 	glp::Device::enable_cubemap_seamless();
 
@@ -323,7 +305,6 @@ void MainForm::release()
 	m_dev.release();
 
 	m_skybox_cubemap.release();
-	m_poolbox_cubemap.release();
 }
 
 
@@ -538,7 +519,7 @@ void MainForm::update(uint64 usecTime)
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	m_water->render(m_cameraPos, m_proj, invView, m_skybox_cubemap, m_poolbox_cubemap);
+	m_water->render(m_cameraPos, m_proj, invView, m_skybox_cubemap);
 	
 	glp::Device::bind_program(m_skybox_prog);
 	glp::Device::bind_tex(m_skybox_cubemap, 3);
