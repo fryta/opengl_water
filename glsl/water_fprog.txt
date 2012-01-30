@@ -37,7 +37,7 @@ uniform vec3 poolWallPoints[5] = {vec3(0.0, -1.0, 2.0), // front
 								  vec3(4.0, -1.0, 0.0), // right
 								  vec3(0.0, -2.0, 0.0)}; // bottom
 
-uniform float eps = 0.0001;
+uniform float eps = 0.00001;
 
 vec3 intersectionVector;
 
@@ -157,7 +157,7 @@ void main()
 		kA = mix(texture(texDiff, texcoord).rgb, texture(cube_map, -refraction_coord).rgb, 0.94);
 	} else {
 		refraction_ratio = f + (1 - f) * pow(1 - dot(-normalize(incomeRay), N), 5);
-		kA = mix(texture(texDiff, texcoord).rgb, mix(refractColor, texture(cube_map, reflection_coord).rgb, 5.0 * refraction_ratio), 0.94);
+		kA = mix(texture(texDiff, texcoord).rgb, mix(refractColor, texture(cube_map, reflection_coord).rgb, 2.5 * refraction_ratio), 0.94);
 	}
 
 	// END: refract + reflect 
