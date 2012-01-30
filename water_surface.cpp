@@ -64,7 +64,7 @@ bool WaterSurface::init()
 
 	// pool texture 
 	m_pool_tex.init();
-	if (!glpx::LoadTex2D_RGBA(m_pool_tex, L"data/textures/cubemap_grid_256.png")) {
+	if (!glpx::LoadTex2D_RGBA(m_pool_tex, L"data/textures/tile.gif")) {
 		fprintf(stderr, "Loading pool texture failed.\n");
 		return false;
 	}

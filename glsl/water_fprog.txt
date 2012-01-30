@@ -5,7 +5,7 @@ uniform sampler2D texDiff;
 uniform sampler2D pool_tex;
 uniform samplerCube cube_map;
 uniform samplerCube pool_map;
-uniform vec3 lightPos = vec3(0.0, 10.0, 0.0);
+uniform vec3 lightPos = vec3(-170.0, 100.0, 200.0);
 uniform vec3 viewerPos = vec3(0.0, 0.0, 0.0);
 uniform float shininess = 8.0;
 
@@ -37,7 +37,7 @@ uniform vec3 poolWallPoints[5] = {vec3(0.0, -1.0, 2.0), // front
 								  vec3(4.0, -1.0, 0.0), // right
 								  vec3(0.0, -2.0, 0.0)}; // bottom
 
-uniform float eps = 0.00001;
+uniform float eps = 0.000001;
 
 vec3 intersectionVector;
 
@@ -154,22 +154,22 @@ void main()
 	vec3 kA; 
 	if(viewerPos.y < water_y_pos){
 		refraction_ratio = f + (1 - f) * pow(1 - dot(normalize(incomeRay), N), 5);
-		kA = mix(texture(texDiff, texcoord).rgb, texture(cube_map, -refraction_coord).rgb, 0.94);
+		kA = mix(texture(texDiff, texcoord).rgb, texture(cube_map, -refraction_coord).rgb, 0.80);
 	} else {
 		refraction_ratio = f + (1 - f) * pow(1 - dot(-normalize(incomeRay), N), 5);
-		kA = mix(texture(texDiff, texcoord).rgb, mix(refractColor, texture(cube_map, reflection_coord).rgb, 2.5 * refraction_ratio), 0.94);
+		kA = mix(texture(texDiff, texcoord).rgb, mix(refractColor, texture(cube_map, reflection_coord).rgb, 2.5 * refraction_ratio), 0.80);
 	}
 
 	// END: refract + reflect 
 
-	float ambient_factor = 0.7f;//0.125f;
+	float ambient_factor = 0.6f;
 	float diff_factor = max(dot(N, L), 0.0);
 	float spec_factor = (shininess + 2.0f)*pow(max(dot(N, H), 0.0), shininess)/32.0;
 	
-	//vec3 kA = mix(texture(texDiff, texcoord).rgb, mix(texture(pool_map, refraction_coord).rgb, texture(cube_map, reflection_coord).rgb, 5.0 * refraction_ratio), 0.8);
+	//vec3 kA = mix(texture(texDiff, texcoord).rgb, mix(texture(pool_map, refraction_coord).rgb, texture(cube_map, reflection_coord).rgb, refraction_ratio), 0.8);
 
-	vec3 kD = vec3(0.0f, 0.0f, 0.1f);//kA;
-	vec3 kS = vec3(0); //vec3(1.0, 1.0, 1.0);
+	vec3 kD = kA;//vec3(0.0f, 0.0f, 0.1f);//kA;
+	vec3 kS = vec3(1.0, 1.0, 1.0);
 
 	rslt = vec4(kS*spec_factor + kD*diff_factor + kA*ambient_factor, 1.0);
 }
